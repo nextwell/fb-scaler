@@ -1,12 +1,15 @@
-let express = require("express");
-let router = express.Router();
-let path = require('path');
+let express = require("express"),
+    router = express.Router();
 
 //----------------------------------------------------------------------------------------
-// Currency functions
+// test
 
 router.get("/", async (req, res) => {
-    res.sendFile(path.resolve('client/list.html'));
+
+    res.json({ success: true })
 });
 
 module.exports = router;
+
+
+
