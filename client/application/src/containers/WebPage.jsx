@@ -4,6 +4,7 @@ import Home from "./../components/Home.jsx";
 import Settings from "./../components/Settings.jsx";
 import Users from "./../components/Users.jsx";
 import SideBar from "./../components/SideBar.jsx";
+import Proxies from "./../components/Proxies";
 
 import { connect } from "react-redux";
 
@@ -31,6 +32,7 @@ class WebPage extends React.Component {
                     <Route exact path="/home" component={Home} />
 
                     <Route path="/users" component={Users} />
+                    <Route path="/proxies" component={Proxies} />
                     <Route path="/settings" component={Settings} />
                 </Layout>
             </Router>

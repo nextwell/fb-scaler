@@ -11,7 +11,7 @@ export default class Users extends React.Component {
     render() {
         return (
             <Layout>
-                <Header style={{ background: "#fff" }}>
+                <Header style={{ background: "#fff", padding: "0" }}>
                     <UsersFunctions />
                 </Header>
 

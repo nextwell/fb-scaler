@@ -1,24 +1,24 @@
-import * as types from "./actionTypes.jsx";
 import axios from "axios";
+import * as types from "./actionTypes.jsx";
 
-function requestUser() {
-    return { type: types.REQ_USER };
+function requestProxy() {
+    return { type: types.REQ_PROXY };
 }
 
-function receiveUser(json) {
+function receiveProxy(json) {
     return {
-        type: types.RECV_USER,
+        type: types.RECV_PROXY,
         data: json,
     };
 }
 
-export function fetchUsers(url) {
+export function fetchProxies(url) {
     return function (dispatch) {
-        dispatch(requestUser());
+        dispatch(requestProxy());
         return axios
             .get(url)
             .then(function (response) {
-                dispatch(receiveUser(response.data));
+                dispatch(receiveProxy(response.data));
             })
             .catch(function (response) {
                 console.log(response);

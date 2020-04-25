@@ -1,4 +1,5 @@
 let express = require("express"),
+    path = require("path"),
     router = express.Router();
 
 //----------------------------------------------------------------------------------------
@@ -6,7 +7,7 @@ let express = require("express"),
 
 router.get("/", async (req, res) => {
 
-    res.json({ success: true })
+    res.sendFile(path.join(__dirname + '/client/application/build/index.html'));
 });
 
 module.exports = router;

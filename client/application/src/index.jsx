@@ -9,20 +9,22 @@ import WebPage from "./containers/WebPage.jsx";
 
 import "./index.css";
 
-// import { fetchFiles } from './actions/actionFiles.jsx';
-// import { fetchUser } from './actions/actionUser.jsx';
+import { fetchProxies } from "./actions/actionProxy.jsx";
+import { fetchUsers } from "./actions/actionUser.jsx";
 
 let app = document.getElementById("root");
 
-// function loadData() {
-// 	store.dispatch(fetchFiles('/api/files'));
-// 	store.dispatch(fetchUser('/api/user'));
-// };
+let url = "";
+
+function loadData() {
+    store.dispatch(fetchProxies(`${url}/api/proxies`));
+    store.dispatch(fetchUsers(`${url}/api/users`));
+}
 
 class App extends React.Component {
     componentDidMount() {
-        //loadData();
-        console.log(1);
+        loadData();
+        console.log("Loading data...");
     }
     render() {
         return (

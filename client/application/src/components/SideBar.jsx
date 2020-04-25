@@ -7,6 +7,7 @@ import {
     UserOutlined,
     SettingOutlined,
     HomeOutlined,
+    InteractionOutlined,
 } from "@ant-design/icons";
 
 import { Link } from "react-router-dom";
@@ -34,12 +35,20 @@ export default class SideBar extends React.Component {
                 </Menu.Item>
 
                 <Menu.Item key="3">
+                    <Link to="/proxies">
+                        <InteractionOutlined />
+                        Прокси
+                    </Link>
+                </Menu.Item>
+
+                <Menu.Item key="4">
                     <Link to="/settings">
                         <SettingOutlined />
                         Настройки
                     </Link>
                 </Menu.Item>
-                <Menu.Item key="4">
+
+                <Menu.Item key="5">
                     <Link href="/logout">
                         <LogoutOutlined />
                         Выйти

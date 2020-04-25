@@ -1,5 +1,6 @@
 let mongoose = require("mongoose"),
 	Users = require("./UsersUtils"),
+	Proxies = require("./ProxiesUtils"),
 	config = require("./../../config")
 
 mongoose.Promise = global.Promise
@@ -8,7 +9,7 @@ module.exports.setUpConnection = () => {
 
 	let MODE = process.env.MODE
 	let DB_URL = config.DB_URL
-	if (MODE == "DEVELOP") DB_URL = "mongodb://localhost/signals"
+	if (MODE == "DEVELOP") DB_URL = "mongodb://localhost/fbscale"
 
 	try {
 		mongoose.connect(DB_URL, {
@@ -23,3 +24,4 @@ module.exports.setUpConnection = () => {
 }
 
 module.exports.Users = Users
+module.exports.Proxies = Proxies

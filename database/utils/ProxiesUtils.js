@@ -1,34 +1,34 @@
 let mongoose = require("mongoose"),
-	Users = require("../models/Users.js")
+	Proxies = require("../models/Proxies.js")
 
 let ObjectID = mongoose.Types.ObjectId
 
-const User = mongoose.model("Users")
+const Proxy = mongoose.model("Proxies")
 
-module.exports.create = (user_d) => {
-	let newObject = new User(user_d)
+module.exports.create = (proxy_d) => {
+	let newObject = new Proxy(proxy_d)
 	let promise = newObject.save()
 	return promise
 }
 
 
 module.exports.get_all = async () => {
-	return Users.find({})
+	return Proxies.find({})
 }
 
 
 module.exports.get_by_id = async (_id) => {
-	return Users.find({ _id: ObjectID(_id) })
+	return Proxies.find({ _id: ObjectID(_id) })
 }
 
 module.exports.remove_by_id = async (_id) => {
-	return Users.remove({ _id: ObjectID(_id) })
+	return Proxies.remove({ _id: ObjectID(_id) })
 }
 
 module.exports.get_by_params = async (_id) => {
-	return Users.find(params)
+	return Proxies.find(params)
 }
 
 module.exports.remove_by_params = async (_id) => {
-	return Users.remove(params)
+	return Proxies.remove(params)
 }

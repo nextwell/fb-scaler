@@ -1,6 +1,10 @@
 import React from "react";
 
-import { store } from "../store/store.jsx";
+import { fetchProxies } from "./../actions/actionProxy.jsx";
+
+import { store } from "./../store/store.jsx";
+
+import axios from "axios";
 
 import { Menu, Modal, Button, Select } from "antd";
 
@@ -14,6 +18,8 @@ const layout = {
     wrapperCol: { span: 16 },
 };
 
+let url = "";
+
 export default class AddUser extends React.Component {
     constructor(props) {
         super(props);
@@ -26,18 +32,14 @@ export default class AddUser extends React.Component {
     setModalLoading = (loading) => {
         this.setState({ loading: loading });
     };
-    onFinish = (values) => {
+    onFinish = async (values) => {
         this.setModalLoading(true);
+        let result = await axios.post(`${url}/api/proxies/new`, values.proxy);
+        store.dispatch(fetchProxies(`${url}/api/proxies/`));
 
-        // push form data to server
-
-        setTimeout(() => {
-            this.setModalLoading(false);
-            this.setModalVisible(false);
-            this.reset();
-        }, 2000);
-
-        console.log(values);
+        this.setModalLoading(false);
+        this.setModalVisible(false);
+        this.reset();
     };
     reset = () => {
         this.formRef.current.resetFields();
@@ -55,7 +57,7 @@ export default class AddUser extends React.Component {
                         icon={<PlusOutlined />}
                         onClick={() => this.setModalVisible(true)}
                     >
-                        Добавить пользователя
+                        Добавить прокси
                     </Button>
                 </Menu.Item>
                 <Modal
@@ -67,49 +69,45 @@ export default class AddUser extends React.Component {
                     cancelText="Закрыть"
                     okText="Создать"
                     okButtonProps={{
-                        form: "new-user",
+                        form: "new-proxy",
                         key: "submit",
                         htmlType: "submit",
                     }}
                 >
                     <Form
                         {...layout}
-                        name="new-user"
+                        name="new-proxy"
                         onFinish={this.onFinish}
                         ref={this.formRef}
                     >
                         <Form.Item
-                            name={["user", "name"]}
-                            label="Имя"
+                            name={["proxy", "name"]}
+                            label="Название"
                             rules={[{ required: true }]}
                         >
                             <Input />
                         </Form.Item>
                         <Form.Item
-                            name={["user", "user-agent"]}
-                            label="UserAgent"
+                            name={["proxy", "region"]}
+                            label="Регион"
                             rules={[{ required: true }]}
                         >
                             <Input />
                         </Form.Item>
                         <Form.Item
-                            name={["user", "access-token"]}
-                            label="AccessToken"
+                            name={["proxy", "ip"]}
+                            label="IP"
                             rules={[{ required: true }]}
                         >
                             <Input />
                         </Form.Item>
+
                         <Form.Item
-                            name={["user", "proxy"]}
-                            label="proxy"
+                            name={["proxy", "port"]}
+                            label="PORT"
                             rules={[{ required: true }]}
                         >
-                            <Select>
-                                <Option value="1">Proxy 1 | RU</Option>
-                                <Option value="2">Proxy 3 | UK</Option>
-                                <Option value="3">Proxy 4 | US</Option>
-                                <Option value="4">Proxy 5 | FR</Option>
-                            </Select>
+                            <Input />
                         </Form.Item>
                     </Form>
                 </Modal>

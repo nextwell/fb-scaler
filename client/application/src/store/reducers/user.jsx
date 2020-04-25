@@ -7,8 +7,6 @@ function userReducer(state = {
 	error: false}
 , action = null) {
 	switch(action.type) {
-		case types.RECV_ERROR:
-			return Object.assign({}, state, {isLoading: false, data: action.data, error: true});
 		case types.RECV_USER:
 			return Object.assign({}, state, {isLoading: false, data: action.data, error: false });
 		case types.REQ_USER:

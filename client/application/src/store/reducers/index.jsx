@@ -1,10 +1,10 @@
 import { combineReducers } from "redux";
-import ConfigReducers from "./config.jsx";
 import UserReducers from "./user.jsx";
+import ProxyReducers from "./proxy.jsx";
 
 const allReducers = combineReducers({
     user: UserReducers,
-    config: ConfigReducers,
+    proxy: ProxyReducers,
 });
 
 export default allReducers;
