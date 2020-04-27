@@ -14,7 +14,7 @@ router.post("/new", async (req, res) => {
         date_created: new Date()
     })
     console.log(_new)
-    res.json({ success: true, obj: _new })
+    res.json({ success: true })
 });
 
 router.get("/", async (req, res) => {

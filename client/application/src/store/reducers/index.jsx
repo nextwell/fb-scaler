@@ -3,8 +3,8 @@ import UserReducers from "./user.jsx";
 import ProxyReducers from "./proxy.jsx";
 
 const allReducers = combineReducers({
-    user: UserReducers,
-    proxy: ProxyReducers,
+    users: UserReducers,
+    proxies: ProxyReducers,
 });
 
 export default allReducers;

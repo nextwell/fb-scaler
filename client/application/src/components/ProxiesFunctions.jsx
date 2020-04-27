@@ -1,3 +1,5 @@
+import settings from "./../containers/settings";
+
 import React from "react";
 
 import { fetchProxies } from "./../actions/actionProxy.jsx";
@@ -18,7 +20,7 @@ const layout = {
     wrapperCol: { span: 16 },
 };
 
-let url = "";
+let url = settings.url;
 
 export default class AddUser extends React.Component {
     constructor(props) {
@@ -61,7 +63,7 @@ export default class AddUser extends React.Component {
                     </Button>
                 </Menu.Item>
                 <Modal
-                    title="Создание нового пользователя"
+                    title="Добавление прокси"
                     wrapClassName="vertical-center-modal"
                     visible={this.state.modal}
                     confirmLoading={this.state.loading}
@@ -92,14 +94,15 @@ export default class AddUser extends React.Component {
                             label="Регион"
                             rules={[{ required: true }]}
                         >
-                            <Input />
+                            <Input placeholder="US" />
                         </Form.Item>
                         <Form.Item
                             name={["proxy", "ip"]}
                             label="IP"
                             rules={[{ required: true }]}
+                            help="* only http proxies"
                         >
-                            <Input />
+                            <Input placeholder="127.0.0.1" />
                         </Form.Item>
 
                         <Form.Item
@@ -107,7 +110,7 @@ export default class AddUser extends React.Component {
                             label="PORT"
                             rules={[{ required: true }]}
                         >
-                            <Input />
+                            <Input placeholder="3128" />
                         </Form.Item>
                     </Form>
                 </Modal>

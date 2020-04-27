@@ -18,17 +18,17 @@ module.exports.get_all = async () => {
 
 
 module.exports.get_by_id = async (_id) => {
-	return Proxies.find({ _id: ObjectID(_id) })
+	return Proxies.findOne({ _id: ObjectID(_id) })
 }
 
 module.exports.remove_by_id = async (_id) => {
 	return Proxies.remove({ _id: ObjectID(_id) })
 }
 
-module.exports.get_by_params = async (_id) => {
+module.exports.get_by_params = async (params) => {
 	return Proxies.find(params)
 }
 
-module.exports.remove_by_params = async (_id) => {
+module.exports.remove_by_params = async (params) => {
 	return Proxies.remove(params)
 }

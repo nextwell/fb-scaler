@@ -9,7 +9,7 @@ module.exports.setUpConnection = () => {
 
 	let MODE = process.env.MODE
 	let DB_URL = config.DB_URL
-	if (MODE == "DEVELOP") DB_URL = "mongodb://localhost/fbscale"
+	if (MODE == "DEVELOP") DB_URL = "mongodb://localhost:27017/fbscale"
 
 	try {
 		mongoose.connect(DB_URL, {

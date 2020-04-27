@@ -1,60 +1,192 @@
 import React from "react";
+import { connect } from "react-redux";
+import { Card, Row, Col, Spin, Button, Popconfirm } from "antd";
+import { LoadingOutlined, CloseCircleOutlined } from "@ant-design/icons";
 
-import { Card, Avatar, Row, Col } from "antd";
-import {
-    EditOutlined,
-    EllipsisOutlined,
-    SettingOutlined,
-    UserOutlined,
-    DeleteOutlined,
-} from "@ant-design/icons";
+import { store } from "./../store/store.jsx";
 
-const { Meta } = Card;
+import { fetchUsers } from "./../actions/actionUser.jsx";
 
-export default class AddUser extends React.Component {
-    createUsers = () => {
+import axios from "axios";
+
+import settings from "./../containers/settings";
+let url = settings.url;
+
+const loader = <LoadingOutlined style={{ fontSize: 24 }} spin />;
+
+class UsersList extends React.Component {
+    async handleDelete(user) {
+        let res = await axios.get(`${url}/api/users/remove/${user._id}`);
+        if (res.data.success) {
+            store.dispatch(fetchUsers(`${url}/api/users/`));
+        }
+    }
+    usersList = () => {
+        console.log(this.props);
         let table = [];
 
         // Outer loop to create parent
-        for (let i = 0; i < 60; i++) {
-            table.push(
-                <Col
-                    className="gutter-row"
-                    span={4}
-                    xxl={4}
-                    xl={6}
-                    lg={6}
-                    md={6}
-                    sm={8}
-                    xs={12}
-                >
-                    <Card
-                        hoverable
-                        style={{
-                            marginBottom: "10px",
-                            padding: "10px",
-                        }}
-                        cover={
-                            <UserOutlined
-                                style={{ fontSize: "40px", paddingTop: "15px" }}
-                            />
-                        }
+        let users = this.props.users.data;
+        if (users.length) {
+            users.forEach((user) => {
+                table.push(
+                    <Col
+                        className="gutter-row"
+                        span={4}
+                        xxl={4}
+                        xl={6}
+                        lg={6}
+                        md={6}
+                        sm={8}
+                        xs={12}
                     >
-                        <Meta
-                            title="Ivan Logunov"
-                            description="Description about account"
-                        />
-                    </Card>
-                </Col>
-            );
+                        <Card
+                            title={user.name}
+                            extra={<a href="#">Открыть</a>}
+                            style={{ width: 300 }}
+                            actions={[
+                                <Popconfirm
+                                    title="Вы уверены?"
+                                    cancelText="Нет"
+                                    okText="Да"
+                                    icon={
+                                        <CloseCircleOutlined
+                                            style={{ color: "red" }}
+                                        />
+                                    }
+                                    onConfirm={() => this.handleDelete(user)}
+                                >
+                                    <Button type="link" danger>
+                                        Удалить
+                                    </Button>
+                                </Popconfirm>,
+                            ]}
+                        >
+                            <div>
+                                <p>Business Managers:</p>
+                                <ul>
+                                    {user.bms.map((bm) => {
+                                        return (
+                                            <li>
+                                                {bm.name}
+                                                {bm.ad_accounts.length > 0 && (
+                                                    <div>
+                                                        <small
+                                                            style={{
+                                                                marginLeft:
+                                                                    "12px",
+                                                            }}
+                                                        >
+                                                            Ad Accounts:
+                                                        </small>
+                                                        <ul>
+                                                            {bm.ad_accounts.map(
+                                                                (
+                                                                    ad_account
+                                                                ) => {
+                                                                    return (
+                                                                        <li>
+                                                                            <small>
+                                                                                {
+                                                                                    ad_account.name
+                                                                                }{" "}
+                                                                                (
+                                                                                {
+                                                                                    ad_account.account_status_text
+                                                                                }
+
+                                                                                )
+                                                                            </small>
+                                                                        </li>
+                                                                    );
+                                                                }
+                                                            )}
+                                                        </ul>
+                                                    </div>
+                                                )}
+                                                {bm.pages.length > 0 && (
+                                                    <div>
+                                                        <small
+                                                            style={{
+                                                                marginLeft:
+                                                                    "12px",
+                                                            }}
+                                                        >
+                                                            Pages:
+                                                        </small>
+                                                        <ul>
+                                                            {bm.pages.map(
+                                                                (page) => {
+                                                                    return (
+                                                                        <li>
+                                                                            <small>
+                                                                                {
+                                                                                    page.name
+                                                                                }
+                                                                            </small>
+                                                                        </li>
+                                                                    );
+                                                                }
+                                                            )}
+                                                        </ul>
+                                                    </div>
+                                                )}
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                            </div>
+                        </Card>
+
+                        {/* <Card
+                            hoverable
+                            style={{
+                                marginBottom: "10px",
+                                padding: "10px",
+                            }}
+                            cover={
+                                <UserOutlined
+                                    style={{
+                                        fontSize: "40px",
+                                        paddingTop: "15px",
+                                    }}
+                                />
+                            }
+                        >
+                            <Meta
+                                title={user.name}
+                                // description="Description about account"
+                            />
+                        </Card> */}
+                    </Col>
+                );
+            });
         }
         return table;
     };
     render() {
+        console.log(this.props);
         return (
-            <Row gutter={12} style={{ padding: "20px" }}>
-                {this.createUsers()}
-            </Row>
+            <Spin
+                spinning={this.props.users.isLoading}
+                size="large"
+                indicator={loader}
+                tip="Загрузка..."
+                style={{ fontSize: "20px", marginTop: "25%" }}
+                alignment="middle"
+            >
+                <Row gutter={12} style={{ padding: "20px" }}>
+                    {this.usersList()}
+                </Row>
+            </Spin>
         );
     }
 }
+
+function mapStateToProps(state) {
+    return {
+        users: state.users,
+    };
+}
+
+export default connect(mapStateToProps)(UsersList);

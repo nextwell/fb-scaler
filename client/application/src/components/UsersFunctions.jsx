@@ -1,6 +1,14 @@
+import settings from "./../containers/settings";
+
 import React from "react";
 
 import { store } from "../store/store.jsx";
+
+import { fetchUsers } from "./../actions/actionUser.jsx";
+
+import axios from "axios";
+
+import { connect } from "react-redux";
 
 import { Menu, Modal, Button, Select } from "antd";
 
@@ -9,12 +17,14 @@ import { PlusOutlined } from "@ant-design/icons";
 import { Form, Input } from "antd";
 const { Option } = Select;
 
+let url = settings.url;
+
 const layout = {
     labelCol: { span: 8 },
     wrapperCol: { span: 16 },
 };
 
-export default class AddUser extends React.Component {
+class AddUser extends React.Component {
     constructor(props) {
         super(props);
         this.state = { modal: false, loading: false };
@@ -26,23 +36,21 @@ export default class AddUser extends React.Component {
     setModalLoading = (loading) => {
         this.setState({ loading: loading });
     };
-    onFinish = (values) => {
+    onFinish = async (values) => {
         this.setModalLoading(true);
+        let result = await axios.post(`${url}/api/users/new`, values.user);
+        store.dispatch(fetchUsers(`${url}/api/users/`));
 
-        // push form data to server
-
-        setTimeout(() => {
-            this.setModalLoading(false);
-            this.setModalVisible(false);
-            this.reset();
-        }, 2000);
-
-        console.log(values);
+        this.setModalLoading(false);
+        this.setModalVisible(false);
+        this.reset();
     };
     reset = () => {
         this.formRef.current.resetFields();
     };
     render() {
+        let proxies = this.props.proxies.data;
+        console.log(proxies);
         return (
             <Menu
                 theme="light"
@@ -86,29 +94,44 @@ export default class AddUser extends React.Component {
                             <Input />
                         </Form.Item>
                         <Form.Item
-                            name={["user", "user-agent"]}
+                            name={["user", "user_agent"]}
                             label="UserAgent"
                             rules={[{ required: true }]}
                         >
                             <Input />
                         </Form.Item>
                         <Form.Item
-                            name={["user", "access-token"]}
+                            name={["user", "access_token"]}
                             label="AccessToken"
                             rules={[{ required: true }]}
                         >
                             <Input />
                         </Form.Item>
                         <Form.Item
-                            name={["user", "proxy"]}
-                            label="proxy"
+                            name={["user", "proxy_id"]}
+                            label="Proxy"
                             rules={[{ required: true }]}
                         >
-                            <Select>
-                                <Option value="1">Proxy 1 | RU</Option>
-                                <Option value="2">Proxy 3 | UK</Option>
-                                <Option value="3">Proxy 4 | US</Option>
-                                <Option value="4">Proxy 5 | FR</Option>
+                            <Select
+                                showSearch
+                                placeholder="Выберите прокси"
+                                optionFilterProp="children"
+                                filterOption={(input, option) =>
+                                    option.children.indexOf(input) >= 0
+                                }
+                            >
+                                {proxies.map((proxy) => {
+                                    console.log(1);
+                                    return (
+                                        <Option value={proxy._id}>
+                                            <span style={{ color: "green" }}>
+                                                {proxy.region}
+                                            </span>{" "}
+                                            / {proxy.name} / {proxy.ip}:
+                                            {proxy.port} ({proxy.region})
+                                        </Option>
+                                    );
+                                })}
                             </Select>
                         </Form.Item>
                     </Form>
@@ -117,3 +140,11 @@ export default class AddUser extends React.Component {
         );
     }
 }
+
+function mapStateToProps(state) {
+    return {
+        proxies: state.proxies,
+    };
+}
+
+export default connect(mapStateToProps)(AddUser);

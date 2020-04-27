@@ -1,3 +1,5 @@
+import settings from "./../containers/settings";
+
 import React from "react";
 import { store } from "./../store/store.jsx";
 
@@ -11,7 +13,7 @@ import { CloseCircleOutlined } from "@ant-design/icons";
 import { Layout, Table, Tag, Popconfirm, Button } from "antd";
 const { Header, Content } = Layout;
 
-let url = "";
+let url = settings.url;
 
 class Proxies extends React.Component {
     dataSource() {
@@ -103,7 +105,7 @@ class Proxies extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        proxies: state.proxy,
+        proxies: state.proxies,
     };
 }
 

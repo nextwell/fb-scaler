@@ -46,7 +46,7 @@ let fields = [
     "offsite_pixels_tos_accepted",
     "owner",
     "partner",
-    "rf_spec",
+    // "rf_spec",
     "spend_cap",
     "tax_id",
     "tax_id_status",
@@ -71,6 +71,22 @@ class ad_account_m extends fb_root {
     constructor(_fields) {
         super();
         this.fields = _fields;
+    }
+    status(code) {
+        let status_msg
+        switch (code) {
+            case 1: status_msg = "ACTIVE"; break;
+            case 2: status_msg = "DISABLED"; break;
+            case 3: status_msg = "UNSETTLED"; break;
+            case 7: status_msg = "PENDING_RISK_REVIEW"; break;
+            case 8: status_msg = "PENDING_SETTLEMENT"; break;
+            case 9: status_msg = "IN_GRACE_PERIOD"; break;
+            case 100: status_msg = "PENDING_CLOSURE"; break;
+            case 101: status_msg = "CLOSED"; break;
+            case 201: status_msg = "ANY_ACTIVE"; break;
+            case 202: status_msg = "ANY_CLOSED"; break;
+        }
+        return status_msg
     }
 }
 

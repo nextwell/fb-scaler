@@ -1,3 +1,5 @@
+import settings from "./containers/settings";
+
 import React from "react";
 import ReactDOM from "react-dom";
 
@@ -14,7 +16,7 @@ import { fetchUsers } from "./actions/actionUser.jsx";
 
 let app = document.getElementById("root");
 
-let url = "";
+let url = settings.url;
 
 function loadData() {
     store.dispatch(fetchProxies(`${url}/api/proxies`));

@@ -18,17 +18,24 @@ module.exports.get_all = async () => {
 
 
 module.exports.get_by_id = async (_id) => {
-	return Users.find({ _id: ObjectID(_id) })
+	return Users.findOne({ _id: ObjectID(_id) })
 }
 
 module.exports.remove_by_id = async (_id) => {
-	return Users.remove({ _id: ObjectID(_id) })
+	return Users.deleteOne({ _id: ObjectID(_id) })
 }
 
-module.exports.get_by_params = async (_id) => {
+module.exports.get_by_params = async (params) => {
 	return Users.find(params)
 }
 
-module.exports.remove_by_params = async (_id) => {
+module.exports.remove_by_params = async (params) => {
 	return Users.remove(params)
+}
+
+//----------------------------------------------------------------------------------------
+// Update User status
+
+module.exports.update = (object) => {
+	return Users.update({ _id: ObjectID(object._id) }, { $set: object.action });
 }
