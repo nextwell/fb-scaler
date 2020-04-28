@@ -2,7 +2,9 @@ let fb_root = require("./root");
 
 let fields = [
     "id",
-    "name"
+    "name",
+    "temporary_status",
+    "is_permanently_closed"
 ];
 
 class page_m extends fb_root {
