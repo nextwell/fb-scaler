@@ -13,7 +13,11 @@ class c_page {
                 headers: { 'User-Agent': user.user_agent }
             })
 
-        let document_2 = await request(`https://graph.facebook.com/${api_version}/${bm_id}/client_pages?fields=${m_fb.url_format()}&access_token=${user.access_token}`)
+        let document_2 = await request(`https://graph.facebook.com/${api_version}/${bm_id}/client_pages?fields=${m_fb.url_format()}&access_token=${user.access_token}`,
+            {
+                proxy: `http://${user.ip}:${user.port}`,
+                headers: { 'User-Agent': user.user_agent }
+            })
         data = [...data, ...(JSON.parse(document.body)).data]
         data = [...data, ...(JSON.parse(document_2.body)).data]
         // for (let i = 0; i < data.length; i++) {

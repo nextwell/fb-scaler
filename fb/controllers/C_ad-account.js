@@ -6,12 +6,19 @@ class c_ad_ac {
         this.api_version = "v6.0"
     }
     async get(user, bm_id, api_version = this.api_version) {
+        let data = []
         let document = await request(`https://graph.facebook.com/${api_version}/${bm_id}/client_ad_accounts?fields=${m_fb.url_format()}&access_token=${user.access_token}`,
             {
                 proxy: `http://${user.ip}:${user.port}`,
                 headers: { 'User-Agent': user.user_agent }
             })
-        let data = (JSON.parse(document.body)).data
+        data = [...data, ...(JSON.parse(document.body)).data]
+        let document_2 = await request(`https://graph.facebook.com/${api_version}/${bm_id}/owned_ad_accounts?fields=${m_fb.url_format()}&access_token=${user.access_token}`,
+            {
+                proxy: `http://${user.ip}:${user.port}`,
+                headers: { 'User-Agent': user.user_agent }
+            })
+        data = [...data, ...(JSON.parse(document_2.body)).data]
         for (let i = 0; i < data.length; i++) {
             let status_text = m_fb.status(data[i].account_status)
             data[i].account_status_text = status_text
