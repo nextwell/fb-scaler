@@ -12,7 +12,7 @@ import { connect } from "react-redux";
 
 import { Menu, Modal, Button, Select } from "antd";
 
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 
 import { Form, Input } from "antd";
 const { Option } = Select;
@@ -64,6 +64,14 @@ class AddUser extends React.Component {
                         onClick={() => this.setModalVisible(true)}
                     >
                         Добавить пользователя
+                    </Button>
+                </Menu.Item>
+                <Menu.Item key="2" danger>
+                    <Button
+                        icon={<ReloadOutlined />}
+                        onClick={() => console.log("Update")}
+                    >
+                        Обновить все данные
                     </Button>
                 </Menu.Item>
                 <Modal

@@ -21,26 +21,28 @@ router.post("/new", async (req, res) => {
 
 router.get("/", async (req, res) => {
     let users = await db.Users.get_all()
-    let users_f = []
-    for (let i = 0; i < users.length; i++) {
-        let user = users[i].toObject()
-        let proxy = await db.Proxies.get_by_id(user.proxy_id)
-        if (proxy) {
-            user.ip = proxy.ip
-            user.port = proxy.port
-            let ans = await fb.bus_manager.get(user)
-            user.bms = ans
-            for (let i = 0; i < user.bms.length; i++) {
-                let bm = user.bms[i];
-                let ad_accounts = await fb.ad_account.get(user, bm.id)
-                let pages = await fb.page.get(user, bm.id)
-                user.bms[i].pages = pages
-                user.bms[i].ad_accounts = ad_accounts
-            }
-            users_f.push(user)
-        }
-    }
-    res.json(users_f)
+    
+    // let users_f = []
+    // for (let i = 0; i < users.length; i++) {
+    //     let user = users[i].toObject()
+    //     let proxy = await db.Proxies.get_by_id(user.proxy_id)
+    //     if (proxy) {
+    //         user.ip = proxy.ip
+    //         user.port = proxy.port
+    //         let ans = await fb.bus_manager.get(user)
+    //         user.bms = ans
+    //         for (let i = 0; i < user.bms.length; i++) {
+    //             let bm = user.bms[i];
+    //             let ad_accounts = await fb.ad_account.get(user, bm.id)
+    //             let pages = await fb.page.get(user, bm.id)
+    //             user.bms[i].pages = pages
+    //             user.bms[i].ad_accounts = ad_accounts
+    //         }
+    //         users_f.push(user)
+    //     }
+    // }
+    // res.json(users_f)
+    res.json(users)
 });
 
 router.get("/:id", async (req, res) => {

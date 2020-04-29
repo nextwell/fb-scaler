@@ -1,5 +1,6 @@
 let express = require("express"),
     db = require("./../../db"),
+    requestPromise = require("request-promise"),
     router = express.Router();
 
 //----------------------------------------------------------------------------------------
@@ -44,6 +45,29 @@ router.get("/remove/:id", async (req, res) => {
         res.json({ err: "Error" })
     }
 });
+
+router.get("/:id/check", async (req, res) => {
+    let id = req.params.id
+
+    let proxy = await db.Proxies.get_by_id(id)
+    if (proxy) {
+        try {
+            let document = await requestPromise(
+                {
+                    uri: `https://google.com/`,
+                    method: "GET",
+                    proxy: `http://${proxy.ip}:${proxy.port}`
+                })
+
+            if (document) res.json({ success: true, proxy: proxy })
+            return document
+        } catch (error) {
+            res.json({ err: `Ошибка при проверке прокси (${proxy.name})` })
+        }
+    }
+    else res.json({ err: "Прокси не найдена в базе данных" })
+
+})
 
 
 

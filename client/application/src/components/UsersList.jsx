@@ -1,7 +1,11 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Card, Row, Col, Spin, Button, Popconfirm } from "antd";
-import { LoadingOutlined, CloseCircleOutlined } from "@ant-design/icons";
+import {
+    LoadingOutlined,
+    CloseCircleOutlined,
+    ReloadOutlined,
+} from "@ant-design/icons";
 
 import { store } from "./../store/store.jsx";
 
@@ -20,6 +24,9 @@ class UsersList extends React.Component {
         if (res.data.success) {
             store.dispatch(fetchUsers(`${url}/api/users/`));
         }
+    }
+    async handleUpdate(user) {
+        console.log("Update user");
     }
     usersList = () => {
         console.log(this.props);
@@ -56,13 +63,27 @@ class UsersList extends React.Component {
                                     }
                                     onConfirm={() => this.handleDelete(user)}
                                 >
-                                    <Button type="link" danger>
+                                    <Button danger type="link">
                                         Удалить
+                                    </Button>
+                                </Popconfirm>,
+                                <Popconfirm
+                                    title="Вы уверены?"
+                                    cancelText="Нет"
+                                    okText="Да"
+                                    icon={<ReloadOutlined />}
+                                    onConfirm={() => this.handleUpdate(user)}
+                                >
+                                    <Button
+                                        type="link"
+                                        className="link-success"
+                                    >
+                                        Обновить
                                     </Button>
                                 </Popconfirm>,
                             ]}
                         >
-                            <div>
+                            {/* <div>
                                 <p>Business Managers:</p>
                                 <ul>
                                     {user.bms.map((bm) => {
@@ -135,7 +156,7 @@ class UsersList extends React.Component {
                                         );
                                     })}
                                 </ul>
-                            </div>
+                            </div> */}
                         </Card>
 
                         {/* <Card
