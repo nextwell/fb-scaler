@@ -169,6 +169,65 @@ router.get("/:id/remove", async (req, res) => {
     }
 })
 
+router.get("/:id/update", async (req, res) => {
+    let errors = []
+    let user_id = req.params.id
+
+    let user = await db.Users.get_by_id(user_id)
+    if (user) {
+        let proxy = await db.Proxies.get_by_id(user.proxy_id)
+        if (proxy) {
+            await db.BManagers.remove_byUserID(user._id)
+            await db.AdAccounts.remove_byUserID(user._id)
+            await db.Pages.remove_byUserID(user._id)
+
+            let user_o = user.toObject()
+
+            user_o.ip = proxy.ip
+            user_o.port = proxy.port
+
+            let bms = await fb.bus_manager.get(user_o)
+
+            if (bms) {
+                for (let i = 0; i < bms.length; i++) {
+                    let bm = bms[i]
+                    let new_bm = await db.BManagers.create({
+                        id: bm.id,
+                        user_id: user_o._id,
+                        data: bm
+                    })
+                    let ad_accounts = await fb.ad_account.get(user_o, bm.id)
+                    for (let i = 0; i < ad_accounts.length; i++) {
+                        let ad_account = ad_accounts[i]
+                        await db.AdAccounts.create({
+                            id: ad_account.account_id,
+                            user_id: user_o._id,
+                            business_id: bm.id,
+                            data: ad_account
+                        })
+                    }
+
+                    let pages = await fb.page.get(user_o, bm.id)
+                    for (let i = 0; i < pages.length; i++) {
+                        let page = pages[i]
+                        await db.Pages.create({
+                            id: page.id,
+                            user_id: user_o._id,
+                            business_id: bm.id,
+                            data: page
+                        })
+                    }
+                }
+                res.json({ success: true })
+            } else errors.push("FB api error process finding business managers")
+
+        } else errors.push("Proxy not found")
+    } else errors.push("User not found")
+
+
+    if (errors.length) res.json({ success: false, err: errors[0] })
+})
+
 
 module.exports = router;
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Card, Row, Col, Spin, Button, Popconfirm } from "antd";
+import { Card, Row, Col, Spin, Button, Popconfirm, message } from "antd";
 import {
     LoadingOutlined,
     CloseCircleOutlined,
@@ -19,6 +19,10 @@ let url = settings.url;
 const loader = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 class UsersList extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { updateLoaders: {} };
+    }
     async handleDelete(user) {
         let res = await axios.get(`${url}/api/users/remove/${user._id}`);
         if (res.data.success) {
@@ -26,7 +30,24 @@ class UsersList extends React.Component {
         }
     }
     async handleUpdate(user) {
+        this.setUpdate_Loaders(user._id, true);
+        let res = await axios.get(`${url}/api/users/${user._id}/update`);
+        console.log(res.data);
+        if (res.data.success) {
+            store.dispatch(fetchUsers(`${url}/api/users/`));
+            message.success(
+                `Обновление пользователя (${user.name}) прошло успешно`
+            );
+        } else if (res.data.err) message.error(res.data.err);
         console.log("Update user");
+        this.setUpdate_Loaders(user._id, false);
+    }
+    setUpdate_Loaders(index, value) {
+        let updateLoaders = this.state.updateLoaders;
+        updateLoaders[index] = value;
+        this.setState({
+            updateLoaders: updateLoaders,
+        });
     }
     usersList = () => {
         console.log(this.props);
@@ -77,6 +98,9 @@ class UsersList extends React.Component {
                                     <Button
                                         type="link"
                                         className="link-success"
+                                        loading={
+                                            this.state.updateLoaders[user._id]
+                                        }
                                     >
                                         Обновить
                                     </Button>

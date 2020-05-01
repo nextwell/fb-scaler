@@ -66,14 +66,14 @@ class AddUser extends React.Component {
                         Добавить пользователя
                     </Button>
                 </Menu.Item>
-                <Menu.Item key="2" danger>
+                {/* <Menu.Item key="2" danger>
                     <Button
                         icon={<ReloadOutlined />}
                         onClick={() => console.log("Update")}
                     >
                         Обновить все данные
                     </Button>
-                </Menu.Item>
+                </Menu.Item> */}
                 <Modal
                     title="Создание нового пользователя"
                     wrapClassName="vertical-center-modal"
