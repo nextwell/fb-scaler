@@ -83,7 +83,7 @@ class UsersList extends React.Component {
                                 </Popconfirm>,
                             ]}
                         >
-                            {/* <div>
+                            <div>
                                 <p>Business Managers:</p>
                                 <ul>
                                     {user.bms.map((bm) => {
@@ -156,29 +156,8 @@ class UsersList extends React.Component {
                                         );
                                     })}
                                 </ul>
-                            </div> */}
+                            </div>
                         </Card>
-
-                        {/* <Card
-                            hoverable
-                            style={{
-                                marginBottom: "10px",
-                                padding: "10px",
-                            }}
-                            cover={
-                                <UserOutlined
-                                    style={{
-                                        fontSize: "40px",
-                                        paddingTop: "15px",
-                                    }}
-                                />
-                            }
-                        >
-                            <Meta
-                                title={user.name}
-                                // description="Description about account"
-                            />
-                        </Card> */}
                     </Col>
                 );
             });

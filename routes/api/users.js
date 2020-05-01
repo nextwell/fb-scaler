@@ -7,42 +7,97 @@ router = express.Router();
 // users routes
 
 router.post("/new", async (req, res) => {
+    let errors = []
     let user = req.body
-    let _new = await db.Users.create({
+    let new_user = await db.Users.create({
         name: user.name,
         access_token: user.access_token,
         user_agent: user.user_agent,
         proxy_id: user.proxy_id,
         date_created: new Date()
     })
-    console.log(_new)
-    res.json({ success: true })
+    let proxy = await db.Proxies.get_by_id(user.proxy_id)
+    if (proxy) {
+        new_user.ip = proxy.ip
+        new_user.port = proxy.port
+        let bms = await fb.bus_manager.get(new_user)
+
+        if (bms) {
+            for (let i = 0; i < bms.length; i++) {
+                let bm = bms[i]
+                let new_bm = await db.BManagers.create({
+                    id: bm.id,
+                    user_id: new_user._id,
+                    data: bm
+                })
+                let ad_accounts = await fb.ad_account.get(new_user, bm.id)
+                for (let i = 0; i < ad_accounts.length; i++) {
+                    let ad_account = ad_accounts[i]
+                    await db.AdAccounts.create({
+                        id: ad_account.account_id,
+                        user_id: new_user._id,
+                        business_id: bm.id,
+                        data: ad_account
+                    })
+                }
+
+                let pages = await fb.page.get(new_user, bm.id)
+                for (let i = 0; i < pages.length; i++) {
+                    let page = pages[i]
+                    await db.Pages.create({
+                        id: page.id,
+                        user_id: new_user._id,
+                        business_id: bm.id,
+                        data: page
+                    })
+                }
+            }
+            res.json({ success: true })
+        }
+        else errors.push("FB api error process finding business managers")
+
+    }
+    else errors.push("Proxy not found")
+
+    if (errors.length) res.json({ success: false, err: errors[0] })
 });
 
 router.get("/", async (req, res) => {
     let users = await db.Users.get_all()
-    
-    // let users_f = []
-    // for (let i = 0; i < users.length; i++) {
-    //     let user = users[i].toObject()
-    //     let proxy = await db.Proxies.get_by_id(user.proxy_id)
-    //     if (proxy) {
-    //         user.ip = proxy.ip
-    //         user.port = proxy.port
-    //         let ans = await fb.bus_manager.get(user)
-    //         user.bms = ans
-    //         for (let i = 0; i < user.bms.length; i++) {
-    //             let bm = user.bms[i];
-    //             let ad_accounts = await fb.ad_account.get(user, bm.id)
-    //             let pages = await fb.page.get(user, bm.id)
-    //             user.bms[i].pages = pages
-    //             user.bms[i].ad_accounts = ad_accounts
-    //         }
-    //         users_f.push(user)
-    //     }
-    // }
-    // res.json(users_f)
-    res.json(users)
+
+    let users_f = []
+    for (let i = 0; i < users.length; i++) {
+        let user = users[i].toObject()
+
+
+
+        user.bms = []
+
+        let bms = await db.BManagers.get_byUserID(user._id)
+
+        for (let y = 0; y < bms.length; y++) {
+            let bm = bms[y]
+            user.bms.push(bm.data)
+            let ad_accounts = await db.AdAccounts.get_byUserID_BM(user._id, bm.id)
+            let pages = await db.Pages.get_byUserID_BM(user._id, bm.id)
+
+            user.bms[y].ad_accounts = []
+            user.bms[y].pages = []
+
+            ad_accounts.forEach((item) => {
+                user.bms[y].ad_accounts.push(item.data)
+            })
+            pages.forEach((item) => {
+                user.bms[y].pages.push(item.data)
+            })
+        }
+
+
+
+        users_f.push(user)
+    }
+    res.json(users_f)
+
 });
 
 router.get("/:id", async (req, res) => {

@@ -18,11 +18,13 @@ class c_page {
                 proxy: `http://${user.ip}:${user.port}`,
                 headers: { 'User-Agent': user.user_agent }
             })
-        data = [...data, ...(JSON.parse(document.body)).data]
-        data = [...data, ...(JSON.parse(document_2.body)).data]
-        // for (let i = 0; i < data.length; i++) {
-        //     this.get_status(user, data[i].id)
-        // }
+        if (JSON.parse(document.body).data) {
+            data = [...data, ...(JSON.parse(document.body)).data]
+        }
+        if (JSON.parse(document_2.body).data) {
+            data = [...data, ...(JSON.parse(document_2.body)).data]
+        }
+
         return data
     }
 

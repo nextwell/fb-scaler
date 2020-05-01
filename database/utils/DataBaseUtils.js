@@ -1,15 +1,16 @@
 let mongoose = require("mongoose"),
 	Users = require("./UsersUtils"),
 	Proxies = require("./ProxiesUtils"),
+	BManagers = require("./B_ManagersUtils"),
+	Ad_Accounts = require("./Ad_AccountsUtils"),
+	Pages = require("./PagesUtils"),
 	config = require("./../../config")
 
 mongoose.Promise = global.Promise
 
 module.exports.setUpConnection = () => {
 
-	let MODE = process.env.MODE
 	let DB_URL = config.DB_URL
-	if (MODE == "DEVELOP") DB_URL = "mongodb://localhost:27017/fbscale"
 
 	try {
 		mongoose.connect(DB_URL, {
@@ -25,3 +26,6 @@ module.exports.setUpConnection = () => {
 
 module.exports.Users = Users
 module.exports.Proxies = Proxies
+module.exports.BManagers = BManagers
+module.exports.AdAccounts = Ad_Accounts
+module.exports.Pages = Pages
