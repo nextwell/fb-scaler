@@ -8,6 +8,7 @@ import {
     SettingOutlined,
     HomeOutlined,
     InteractionOutlined,
+    SolutionOutlined,
 } from "@ant-design/icons";
 
 import { Link } from "react-router-dom";
@@ -42,13 +43,20 @@ export default class SideBar extends React.Component {
                 </Menu.Item>
 
                 <Menu.Item key="4">
+                    <Link to="/newcampaign">
+                        <SolutionOutlined />
+                        Создание компании
+                    </Link>
+                </Menu.Item>
+
+                <Menu.Item key="5">
                     <Link to="/settings">
                         <SettingOutlined />
                         Настройки
                     </Link>
                 </Menu.Item>
 
-                <Menu.Item key="5">
+                <Menu.Item key="6">
                     <Link href="/logout">
                         <LogoutOutlined />
                         Выйти
