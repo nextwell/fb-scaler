@@ -1,4 +1,5 @@
 import React from "react";
+import settings from "./../containers/settings";
 
 import {
     Layout,
@@ -14,9 +15,13 @@ import {
     Result,
     Timeline,
     Alert,
+    message,
 } from "antd";
 import { LoadingOutlined, SmileOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
+import axios from "axios";
+
+let url = settings.url;
 
 const { Header, Content } = Layout;
 
@@ -53,9 +58,9 @@ class createCampaign extends React.Component {
             confirmLoading: false,
         };
     }
-    showModal = () => {
+    setModalVisible = (status) => {
         this.setState({
-            visibleModal: true,
+            visibleModal: status,
         });
     };
 
@@ -67,11 +72,7 @@ class createCampaign extends React.Component {
     userSelected(user_id) {
         let user;
 
-        console.log("PROPS");
-        console.log(this.props);
-
         this.props.users.data.forEach((item) => {
-            console.log(item._id + ": " + user_id);
             if (item._id == user_id) user = item;
         });
 
@@ -83,14 +84,46 @@ class createCampaign extends React.Component {
         }
     }
     proxy_block() {}
-    onFinish(campaign) {
-        console.log(this);
-        this.setModalLoading(true);
+    async onFinish(data) {
+        let campaign = data.campaign;
+
         console.log(campaign);
+        this.setModalLoading(true);
+        let res = await axios.get(
+            `${url}/api/proxies/${this.state.user.proxy_id}/check`
+        );
+        if (res.data.success) {
+            message.success(`Проверка прокси прошла успешно`);
+            campaign.proxy_id = this.state.user.proxy_id;
+            let create_campaign_document = await axios.post(
+                `${url}/api/campaigns/new`,
+                campaign
+            );
+            let data = create_campaign_document.data;
+            if (data.success) {
+                message.success(`Компания (ID: ${data.id}) успешна создана`);
+                this.setModalLoading(false);
+                this.setModalVisible(false);
+                this.resetForm();
+            } else if (data.err) {
+                message.error(data.err);
+            }
+        } else if (res.data.err) {
+            message.error(res.data.err);
+        }
+        this.setModalLoading(false);
     }
 
     setModalLoading = (loading) => {
         this.setState({ confirmLoading: loading });
+    };
+    resetForm = () => {
+        this.setState({
+            user: null,
+            isUserSelected: false,
+            isAdAccountSelected: false,
+        });
+        this.formRef.current.resetFields();
     };
     render() {
         return (
@@ -110,7 +143,12 @@ class createCampaign extends React.Component {
                         icon={<SmileOutlined />}
                         title="Давайте попробуем создать компанию!"
                         extra={
-                            <Button type="primary" onClick={this.showModal}>
+                            <Button
+                                type="primary"
+                                onClick={() => {
+                                    this.setModalVisible(true);
+                                }}
+                            >
                                 Создать
                             </Button>
                         }

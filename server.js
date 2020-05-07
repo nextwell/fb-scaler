@@ -10,7 +10,8 @@ let indexRouter = require("./routes/index");
 let usersRouter = require("./routes/users");
 let apiUsers = require("./routes/api/users");
 let apiProxies = require("./routes/api/proxies");
-let apiFBHelpers = require("./routes/api/fb")
+let apiFBHelpers = require("./routes/api/fb");
+let apiCampaigns = require("./routes/api/campaign")
 
 //----------------------------------------------------------------------------------------
 // Express Settings
@@ -31,10 +32,10 @@ app.use("/users", usersRouter);
 
 
 app.use("/api/users", apiUsers);
-
 app.use("/api/proxies", apiProxies);
-
 app.use("/api/fb", apiFBHelpers);
+app.use("/api/campaigns", apiCampaigns);
+
 
 app.listen(process.env.PORT || cfg["EXPRESS_PORT"], function () {
     let address = this.address();

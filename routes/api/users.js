@@ -1,7 +1,7 @@
 let express = require("express"),
     db = require("./../../db"),
-    fb = require("./../../fb-objects")
-router = express.Router();
+    fb = require("./../../fb-objects"),
+    router = express.Router();
 
 //----------------------------------------------------------------------------------------
 // users routes
