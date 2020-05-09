@@ -17,3 +17,15 @@ body {
 .link-success:hover {
     color: #95de64;
 }
+
+.asset-block {
+    font-size: 11px !important;
+}
+
+.asset-block > * {
+    font-size: 11px !important;
+}
+
+.asset-block * {
+    font-size: 11px !important;
+}

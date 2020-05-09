@@ -11,7 +11,9 @@ let usersRouter = require("./routes/users");
 let apiUsers = require("./routes/api/users");
 let apiProxies = require("./routes/api/proxies");
 let apiFBHelpers = require("./routes/api/fb");
-let apiCampaigns = require("./routes/api/campaign")
+let apiCampaigns = require("./routes/api/campaign");
+let apiPixels = require("./routes/api/pixel");
+let apiAdSets = require("./routes/api/adset")
 
 //----------------------------------------------------------------------------------------
 // Express Settings
@@ -28,13 +30,16 @@ app.use(express.static(path.join(__dirname, "client/application/build")));
 app.use(cors({ origin: '*' }));
 
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
+// app.use("/users", usersRouter);
 
 
 app.use("/api/users", apiUsers);
 app.use("/api/proxies", apiProxies);
 app.use("/api/fb", apiFBHelpers);
 app.use("/api/campaigns", apiCampaigns);
+app.use("/api/pixels", apiPixels);
+
+app.use("/api/adsets", apiAdSets);
 
 
 app.listen(process.env.PORT || cfg["EXPRESS_PORT"], function () {
