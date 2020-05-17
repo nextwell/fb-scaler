@@ -29,3 +29,27 @@ body {
 .asset-block * {
     font-size: 11px !important;
 }
+
+.blue-color {
+    color: #40a9ff;
+}
+
+.red-color {
+    color: red;
+}
+
+.yellow-color {
+    color: #ffa940;
+}
+
+.ffe7ba {
+    background: #ffe7ba;
+}
+
+.text-xs {
+    font-size: 11px;
+}
+
+.text-s {
+    font-size: 12px;
+}

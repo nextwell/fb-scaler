@@ -6,6 +6,7 @@ import Users from "./../components/Users.jsx";
 import SideBar from "./../components/SideBar.jsx";
 import Proxies from "./../components/Proxies";
 import createCampaign from "./../components/createCampaign";
+import CampaignsTemplates from "./CampaignsTemplates";
 
 import { connect } from "react-redux";
 
@@ -34,6 +35,10 @@ class WebPage extends React.Component {
 
                     <Route path="/users" component={Users} />
                     <Route path="/proxies" component={Proxies} />
+                    <Route
+                        path="/campaigns-templates"
+                        component={CampaignsTemplates}
+                    />
                     <Route path="/newcampaign" component={createCampaign} />
                     <Route path="/settings" component={Settings} />
                 </Layout>
