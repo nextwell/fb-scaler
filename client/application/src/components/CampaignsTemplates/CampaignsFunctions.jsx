@@ -4,8 +4,11 @@ import axios from "axios";
 
 import { connect } from "react-redux";
 import settings from "./../../containers/settings";
+import { fetchTemplatesCampaigns } from "./../../actions/actionTemplateCampaign";
 
 import { PlusOutlined, DownOutlined, UploadOutlined } from "@ant-design/icons";
+
+import { store } from "./../../store/store.jsx";
 
 import {
     Form,
@@ -19,7 +22,10 @@ import {
     Popover,
     Alert,
     Upload,
+    message,
 } from "antd";
+
+const { TextArea } = Input;
 
 const { Option } = Select;
 
@@ -60,27 +66,39 @@ class CampaignsFunctions extends React.Component {
                     },
                 ],
                 adsets: [
-                    {
-                        key: 1,
-                        name: "ad_set_1",
-                        destination_type: "MESSENGER",
-                        daily_budget: 100,
-                        age_min: "18",
-                        geo_locations: "US",
-                        custom_event_type: "LEAD",
-                        status: "ACTIVE",
-                        window_days: 1,
-                        ads: [
-                            {
-                                name: "ad_1",
-                                key: 1,
-                                adset_key: 1,
-                            },
-                        ],
-                    },
+                    // {
+                    //     key: 1,
+                    //     name: "ad_set_1",
+                    //     destination_type: "MESSENGER",
+                    //     daily_budget: 100,
+                    //     age_min: "18",
+                    //     geo_locations: "US",
+                    //     custom_event_type: "LEAD",
+                    //     status: "ACTIVE",
+                    //     window_days: 1,
+                    //     ads: [
+                    //         {
+                    //             name: "ad_1",
+                    //             key: 1,
+                    //             adset_key: 1,
+                    //         },
+                    //     ],
+                    // },
                 ],
             },
             default: {
+                campaign: {
+                    campaigns_settings: [
+                        {
+                            key: 1,
+                            name: "campaign_1",
+                            buying_type: "AUCTION",
+                            objective: "CONVERSIONS",
+                            status: "PAUSED",
+                        },
+                    ],
+                    adsets: [],
+                },
                 adset: {
                     name: "template adset",
                     destination_type: "MESSENGER",
@@ -178,6 +196,7 @@ class CampaignsFunctions extends React.Component {
                     cancelText="Закрыть"
                     okText="Создать"
                     okButtonProps={{
+                        onClick: this.onFinish,
                         form: "new-template-campaign",
                         key: "submit",
                         htmlType: "submit",
@@ -843,7 +862,7 @@ class CampaignsFunctions extends React.Component {
                     name={"text"}
                     rules={[{ required: true }]}
                 >
-                    <Input />
+                    <TextArea rows={4} style={{ fontSize: "10px" }} />
                 </Form.Item>
                 <Form.Item label="Description" name={"description"}>
                     <Input />
@@ -853,7 +872,7 @@ class CampaignsFunctions extends React.Component {
                     name={"welcome_text"}
                     rules={[{ required: true }]}
                 >
-                    <Input />
+                    <TextArea rows={4} style={{ fontSize: "10px" }} />
                 </Form.Item>
                 <Form.Item
                     label="answer"
@@ -989,13 +1008,35 @@ class CampaignsFunctions extends React.Component {
             // { title: 'Action', key: 'operation', render: () => <a>Publish</a> },
         ];
     }
-    onFinish = async (values) => {
-        console.log(values);
-        // this.setModalLoading(true);
+    onFinish = async () => {
+        let new_campaign = this.state.campaign_data;
+        console.log(new_campaign);
+        this.setModalLoading(true);
 
-        // this.setModalLoading(false);
-        // this.setModalVisible(false);
-        // this.reset();
+        let res = await axios.post(
+            `${url}/api/campaigns/template/new`,
+            new_campaign
+        );
+
+        if (res.data.success) {
+            store.dispatch(
+                fetchTemplatesCampaigns(`${url}/api/campaigns/template/list`)
+            );
+            message.success("Success creating template campaign");
+            this.setModalLoading(false);
+            this.setModalVisible(false);
+
+            let str = JSON.stringify(this.state.default.campaign);
+            let default_campaign = JSON.parse(str);
+            this.setState({
+                campaign_data: default_campaign,
+                adsets_edit_count: 0,
+                ad_edit_count: 0,
+                edit_campaign_count: 0,
+            });
+        } else {
+            message.error("Error creating template campaign");
+        }
     };
 
     async load_countries() {

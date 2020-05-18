@@ -34,6 +34,41 @@ router.post("/new", async (req, res) => {
 
 });
 
+
+router.post("/template/new", async (req, res) => {
+    console.log(req.body)
+    let obj = await db.TCampaigns.create({ data: req.body, name: req.body.campaigns_settings[0].name, date: new Date() })
+    console.log(obj)
+    if (obj) {
+        res.json({ success: true })
+    }
+    else res.json({ success: false, err: "Error creating db object" })
+})
+
+router.get("/template/list", async (req, res) => {
+    let list = await db.TCampaigns.get_all()
+    let campaigns = {
+        campaigns_settings: [],
+        adsets: []
+    }
+    for (let i = 0; i < list.length; i++) {
+        if (list[i].data) {
+            let item = list[i].data
+            item.campaigns_settings[0].key = i
+            for (let y = 0; y < item.adsets.length; y++) {
+                item.adsets[y].campaign_key = i
+                for (let x = 0; x < item.adsets[y].ads.length; x++) {
+                    item.adsets[y].ads[x].campaign_key = i
+                }
+            }
+            campaigns.campaigns_settings.push(item.campaigns_settings[0])
+            campaigns.adsets = [...campaigns.adsets, ...item.adsets]
+        }
+
+    }
+    res.json(campaigns)
+})
+
 module.exports = router;
 
 

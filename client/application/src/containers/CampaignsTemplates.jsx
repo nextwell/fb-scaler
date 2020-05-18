@@ -2,6 +2,7 @@ import React from "react";
 
 import { connect } from "react-redux";
 import CampaignsFunctions from "./../components/CampaignsTemplates/CampaignsFunctions";
+import CampaignsList from "./../components/CampaignsTemplates/CampaignsList";
 
 import { Layout } from "antd";
 const { Header, Content } = Layout;
@@ -25,7 +26,7 @@ class CampaignsTemplates extends React.Component {
                         overflowY: "auto",
                     }}
                 >
-                    templates list
+                    <CampaignsList />
                 </Content>
                 {/* <MarkDown /> */}
             </Layout>

@@ -13,6 +13,7 @@ import "./index.css";
 
 import { fetchProxies } from "./actions/actionProxy.jsx";
 import { fetchUsers } from "./actions/actionUser.jsx";
+import { fetchTemplatesCampaigns } from "./actions/actionTemplateCampaign";
 
 let app = document.getElementById("root");
 
@@ -21,6 +22,9 @@ let url = settings.url;
 function loadData() {
     store.dispatch(fetchProxies(`${url}/api/proxies`));
     store.dispatch(fetchUsers(`${url}/api/users`));
+    store.dispatch(
+        fetchTemplatesCampaigns(`${url}/api/campaigns/template/list`)
+    );
 }
 
 class App extends React.Component {
