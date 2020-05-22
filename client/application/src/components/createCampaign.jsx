@@ -64,20 +64,9 @@ class createCampaign extends React.Component {
             isAdAccountSelected: false,
             ad_account_id: null,
             confirmLoading: false,
-            life_events: [],
+
             pixels: [],
         };
-    }
-
-    async load_life_events(user_id) {
-        let res = await axios.get(
-            `${url}/api/fb/targeting/category/life-events/${user_id}`
-        );
-        if (res.data) {
-            this.setState({
-                life_events: res.data.data,
-            });
-        }
     }
 
     setModalVisible = (status) => {
@@ -103,20 +92,22 @@ class createCampaign extends React.Component {
                 user: user,
                 isUserSelected: true,
             });
-            this.load_life_events(user_id);
         }
     }
     async onFinish(formData) {
-        let campaign = formData.campaign;
-
         console.log(formData);
+        let campaign = formData;
+        message.info(
+            `Процесс создания кампании начат. Не закрывайте эту страницу`
+        );
+
         this.setModalLoading(true);
         let res = await axios.get(
             `${url}/api/proxies/${this.state.user.proxy_id}/check`
         );
         if (res.data.success) {
             message.success(`Проверка прокси прошла успешно`);
-            campaign.proxy_id = this.state.user.proxy_id;
+
             let create_campaign_document = await axios.post(
                 `${url}/api/campaigns/new`,
                 campaign
@@ -124,30 +115,10 @@ class createCampaign extends React.Component {
             let data = create_campaign_document.data;
             if (data.success) {
                 message.success(`Компания (ID: ${data.id}) успешна создана`);
-                console.log({
-                    user_id: this.state.user._id,
-                    proxy_id: this.state.user.proxy_id,
-                    adsets: formData.adsets,
-                    campaign: {
-                        id: data.id,
-                        pixel_id: campaign.campaign_pixel_id,
-                        custom_event_type: campaign.custom_event_type,
-                    },
-                });
+                campaign.campaign_id = data.id;
                 let createAdSets_document = await axios.post(
                     `${url}/api/adsets/create`,
-                    {
-                        user_id: this.state.user._id,
-                        proxy_id: this.state.user.proxy_id,
-                        adsets: formData.adsets,
-                        campaign: {
-                            id: data.id,
-                            ad_account_id: campaign.ad_account_id,
-                            pixel_id: campaign.campaign_pixel_id,
-                            custom_event_type:
-                                campaign.campaign_custom_event_type,
-                        },
-                    }
+                    campaign
                 );
 
                 if (createAdSets_document.data.success) {
@@ -160,8 +131,6 @@ class createCampaign extends React.Component {
                 } else {
                     message.error("Произошла ошибка при создании адсетов");
                 }
-            } else if (data.err) {
-                message.error(data.err);
             }
         } else if (res.data.err) {
             message.error(res.data.err);
@@ -227,16 +196,29 @@ class createCampaign extends React.Component {
                             onFinish={(formData) => this.onFinish(formData)}
                             ref={this.formRef}
                             {...layout}
+                            initialValues={{ proxy_id: this.proxy_value() }}
                         >
                             <Form.Item
-                                name={["campaign", "user_id"]}
+                                name={"user_id"}
                                 label="Пользователь"
                                 rules={[{ required: true }]}
                             >
                                 {this.users_list()}
                             </Form.Item>
                             <Form.Item
-                                name={["campaign", "ad_account_id"]}
+                                name={"proxy_id"}
+                                rules={[{ required: true }]}
+                                label="Proxy"
+                                style={
+                                    this.state.isUserSelected == true
+                                        ? {}
+                                        : { display: "none" }
+                                }
+                            >
+                                {this.proxy_list()}
+                            </Form.Item>
+                            <Form.Item
+                                name={"ad_account_id"}
                                 label="Рекламный аккаунт"
                                 rules={[{ required: true }]}
                                 style={
@@ -248,8 +230,42 @@ class createCampaign extends React.Component {
                                 {this.ad_accounts_list()}
                             </Form.Item>
 
-                            {this.compaign_sector()}
-                            {this.adsets_sector()}
+                            <Form.Item
+                                name={"page"}
+                                label="Page"
+                                rules={[{ required: true }]}
+                                style={
+                                    this.state.isAdAccountSelected == true
+                                        ? {}
+                                        : { display: "none" }
+                                }
+                            >
+                                {this.pages_list()}
+                            </Form.Item>
+                            <Form.Item
+                                name={"template_campaign_id"}
+                                label="Template Campaign"
+                                rules={[{ required: true }]}
+                                style={
+                                    this.state.isAdAccountSelected == true
+                                        ? {}
+                                        : { display: "none" }
+                                }
+                            >
+                                {this.templates_campaigns()}
+                            </Form.Item>
+                            <Form.Item
+                                name={"pixel"}
+                                label="Pixel"
+                                rules={[{ required: true }]}
+                                style={
+                                    this.state.isAdAccountSelected == true
+                                        ? {}
+                                        : { display: "none" }
+                                }
+                            >
+                                {this.pixels_list()}
+                            </Form.Item>
                         </Form>
                     </Modal>
                 </Content>
@@ -257,6 +273,72 @@ class createCampaign extends React.Component {
                 {/* <MarkDown /> */}
             </Layout>
         );
+    }
+    proxy_value() {
+        if (this.state.user) {
+            this.formRef.current.setFieldsValue({
+                proxy_id: this.state.user.proxy_id,
+            });
+            return this.state.user.proxy_id;
+        }
+    }
+    proxy_list() {
+        if (this.state.user) {
+            return (
+                <Select defaultValue={this.proxy_value()}>
+                    {this.props.proxies.data.map((proxy, index) => (
+                        <Option value={proxy._id}>
+                            {proxy.name} ({proxy.ip}:{proxy.port})
+                        </Option>
+                    ))}
+                </Select>
+            );
+        }
+    }
+    templates_campaigns() {
+        console.log(this.props.tcampaigns);
+
+        if (this.props.tcampaigns.isLoading == false) {
+            if (this.props.tcampaigns.data.campaigns_settings) {
+                return (
+                    <Select>
+                        {this.props.tcampaigns.data.campaigns_settings.map(
+                            (campaign, index) => (
+                                <Option value={campaign._id}>
+                                    {campaign.name}
+                                </Option>
+                            )
+                        )}
+                    </Select>
+                );
+            }
+        }
+    }
+    pages_list() {
+        let user = this.state.user;
+        let options = [];
+        if (user) {
+            user.bms.forEach((bm) => {
+                for (let i = 0; i < bm.pages.length; i++) {
+                    let page = bm.pages[i];
+                    options.push(<Option value={page.id}>{page.name}</Option>);
+                }
+            });
+            return <Select>{options}</Select>;
+        }
+    }
+    pixels_list() {
+        if (this.state.ad_account_id) {
+            return (
+                <Select>
+                    {this.state.pixels.map((pixel, index) => (
+                        <Option value={pixel.id}>
+                            {pixel.name} (id: {pixel.id})
+                        </Option>
+                    ))}
+                </Select>
+            );
+        }
     }
     users_list() {
         let users = this.props.users.data;
@@ -318,265 +400,12 @@ class createCampaign extends React.Component {
         let res = await axios.get(
             `${url}/api/pixels/list/${this.state.user._id}/${ad_account_id}`
         );
+        console.log(res);
 
         if (res.data) {
             this.setState({
                 pixels: res.data.data,
             });
-        }
-    }
-    compaign_sector() {
-        if (this.state.isAdAccountSelected) {
-            return [
-                <Alert
-                    message="Данные компании"
-                    type="info"
-                    showIcon
-                    style={{ marginBottom: "20px" }}
-                />,
-                ,
-                <Form.Item
-                    label="Campaign Name"
-                    name={["campaign", "campaign_name"]}
-                    rules={[{ required: true }]}
-                >
-                    <Input />
-                </Form.Item>,
-                <Form.Item
-                    label="Buying Type"
-                    name={["campaign", "campaign_buying_type"]}
-                    rules={[{ required: true }]}
-                >
-                    <Select>
-                        <Option value="AUCTION">AUCTION</Option>
-                    </Select>
-                </Form.Item>,
-                <Form.Item
-                    label="Objective"
-                    name={["campaign", "campaign_objective"]}
-                    rules={[{ required: true }]}
-                >
-                    <Select>
-                        <Option value="CONVERSIONS">CONVERSIONS</Option>
-                    </Select>
-                </Form.Item>,
-                <Form.Item
-                    label="Status"
-                    name={["campaign", "campaign_status"]}
-                    rules={[{ required: true }]}
-                >
-                    <Select>
-                        <Option value="PAUSED">PAUSED</Option>
-                    </Select>
-                </Form.Item>,
-                <Form.Item
-                    label="Special Ad Category"
-                    name={["campaign", "campaign_special_ad_category"]}
-                    rules={[{ required: true }]}
-                >
-                    <Select>
-                        <Option value="NONE" default>
-                            NONE
-                        </Option>
-                    </Select>
-                </Form.Item>,
-                <Form.Item
-                    label="Pixel"
-                    name={["campaign", "campaign_pixel_id"]}
-                    rules={[{ required: true }]}
-                >
-                    <Select>
-                        {this.state.pixels.map((pixel, index) => (
-                            <Option value={pixel.id}>
-                                {pixel.name} (id: {pixel.id})
-                            </Option>
-                        ))}
-                    </Select>
-                </Form.Item>,
-                <Form.Item
-                    label="Pixel Event Type"
-                    name={["campaign", "campaign_custom_event_type"]}
-                    rules={[{ required: true }]}
-                >
-                    <Select>
-                        <Option value="LEAD">LEAD</Option>
-                    </Select>
-                </Form.Item>,
-            ];
-        }
-    }
-    adsets_sector() {
-        if (this.state.isAdAccountSelected) {
-            return [
-                <Alert
-                    message="Раздел adsets"
-                    type="info"
-                    showIcon
-                    style={{ marginBottom: "20px" }}
-                />,
-                <Form.List name="adsets" style={{ width: "100%" }}>
-                    {(fields, { add, remove }) => {
-                        /**
-                         * `fields` internal fill with `name`, `key`, `fieldKey` props.
-                         * You can extends this into sub field to support multiple dynamic fields.
-                         */
-                        return (
-                            <div>
-                                <Button
-                                    type="dashed"
-                                    onClick={() => {
-                                        add();
-                                    }}
-                                    style={{
-                                        width: "100%",
-                                        marginBottom: "10px",
-                                    }}
-                                >
-                                    <PlusOutlined /> Добавить adset
-                                </Button>
-                                {fields.map((field, index) => (
-                                    <div
-                                        style={{
-                                            padding: "20px 20px 0 20px",
-                                            border: "1px solid #91d5ff",
-                                            marginTop: "10px",
-                                        }}
-                                        className="asset-block"
-                                    >
-                                        <Form.Item
-                                            label="Name"
-                                            name={[field.name, "name"]}
-                                            rules={[{ required: true }]}
-                                            fieldKey={[field.fieldKey, "name"]}
-                                        >
-                                            <Input />
-                                        </Form.Item>
-
-                                        <Form.Item
-                                            label="Destination Type"
-                                            name={[
-                                                field.name,
-                                                "destination_type",
-                                            ]}
-                                            rules={[{ required: true }]}
-                                            fieldKey={[
-                                                field.fieldKey,
-                                                "destination_type",
-                                            ]}
-                                        >
-                                            <Select>
-                                                <Option value="MESSENGER">
-                                                    MESSENGER
-                                                </Option>
-                                            </Select>
-                                        </Form.Item>
-
-                                        <Form.Item
-                                            label="Daily Budget"
-                                            name={[field.name, "daily_budget"]}
-                                            rules={[{ required: true }]}
-                                            fieldKey={[
-                                                field.fieldKey,
-                                                "daily_budget",
-                                            ]}
-                                        >
-                                            <Input />
-                                        </Form.Item>
-
-                                        <Form.Item
-                                            label="Geo Locations"
-                                            name={[field.name, "geo_locations"]}
-                                            rules={[{ required: true }]}
-                                            fieldKey={[
-                                                field.fieldKey,
-                                                "geo_locations",
-                                            ]}
-                                        >
-                                            <Select>
-                                                <Option value="US">US</Option>
-                                            </Select>
-                                        </Form.Item>
-
-                                        <Form.Item
-                                            label="Life Events"
-                                            name={[field.name, "life_events"]}
-                                            rules={[{ required: true }]}
-                                            fieldKey={[
-                                                field.fieldKey,
-                                                "life_events",
-                                            ]}
-                                        >
-                                            <Select>
-                                                {this.state.life_events.map(
-                                                    (event, index) => (
-                                                        <Option
-                                                            value={event.id}
-                                                        >
-                                                            {event.name}
-                                                        </Option>
-                                                    )
-                                                )}
-                                            </Select>
-                                        </Form.Item>
-
-                                        <Form.Item
-                                            label="Status"
-                                            name={[field.name, "status"]}
-                                            rules={[{ required: true }]}
-                                            fieldKey={[
-                                                field.fieldKey,
-                                                "status",
-                                            ]}
-                                        >
-                                            <Select>
-                                                <Option value="PAUSED">
-                                                    PAUSED
-                                                </Option>
-                                            </Select>
-                                        </Form.Item>
-
-                                        <Form.Item
-                                            label="Окно конверсии"
-                                            name={[field.name, "window_days"]}
-                                            rules={[{ required: true }]}
-                                            fieldKey={[
-                                                field.fieldKey,
-                                                "window_days",
-                                            ]}
-                                        >
-                                            <Select>
-                                                <Option value="1">
-                                                    1 день после клика
-                                                </Option>
-                                                <Option value="7">
-                                                    7 дней после клика
-                                                </Option>
-                                            </Select>
-                                        </Form.Item>
-
-                                        <Form.Item
-                                            style={{ marginBottom: "20px" }}
-                                        >
-                                            <Button
-                                                style={{
-                                                    fontSize: "10px",
-                                                }}
-                                                type="link"
-                                                danger
-                                                onClick={() => {
-                                                    remove(field.name);
-                                                }}
-                                            >
-                                                Удалить
-                                            </Button>
-                                        </Form.Item>
-                                    </div>
-                                ))}
-                            </div>
-                        );
-                    }}
-                </Form.List>,
-            ];
         }
     }
 }
@@ -585,6 +414,7 @@ function mapStateToProps(state) {
     return {
         users: state.users,
         proxies: state.proxies,
+        tcampaigns: state.tcampaigns,
     };
 }
 

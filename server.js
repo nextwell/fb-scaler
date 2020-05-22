@@ -159,3 +159,37 @@ async function createAdSet() {
 //createAdSet()
 
 //createCompaign()
+
+async function sadasd() {
+
+    let url = "https://graph.facebook.com/v7.0/act_282228016295994/adimages?access_token=EAAGNO4a7r2wBANEqeWtcDyvQdFqqMP6YYujODQdOV27ZAiwXzoNHkvZAqcv7Ac1fTaY7i2Lu5XmssZCzZBH51ZCwGjhq95rxc7ynSZBpPx9sZBRu1PanfKj4RZBwZBmwlkpTmQSCSvZB8Fs3PUiNGgt9Xj7tLZBKdNLihZAR53lDX2895wZDZD"
+
+    let db = require("./db")
+    let cm = await db.TCampaigns.get_by_id("5ec1f2110398e71eda257955")
+    // console.log(cm)
+    let img = cm.data.adsets[0].ads[0].file_image.file.thumbUrl
+
+
+    img = img.replace("data:image/png;base64,", "")
+
+    let postData = {
+        name: "test",
+        bytes: img.toString('base64')
+    };
+
+    console.log(postData)
+
+
+    let document = await request(url, {
+        method: 'POST',
+
+        data: postData
+    });
+
+    let data = JSON.parse(document.body)
+
+    console.log(data)
+}
+
+
+//sadasd()

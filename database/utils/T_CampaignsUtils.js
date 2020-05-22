@@ -15,3 +15,8 @@ module.exports.create = (data) => {
 module.exports.get_all = () => {
 	return TCampaigns.find({})
 }
+
+
+module.exports.get_by_id = (_id) => {
+	return TCampaigns.findOne({ _id: ObjectID(_id) })
+}

@@ -61,11 +61,11 @@ class UsersList extends React.Component {
                     <Col
                         className="gutter-row"
                         span={4}
-                        xxl={4}
-                        xl={6}
-                        lg={6}
-                        md={6}
-                        sm={8}
+                        xxl={5}
+                        xl={8}
+                        lg={10}
+                        md={10}
+                        sm={12}
                         xs={12}
                     >
                         <Card
