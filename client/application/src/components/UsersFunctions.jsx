@@ -106,14 +106,14 @@ class AddUser extends React.Component {
                             label="UserAgent"
                             rules={[{ required: true }]}
                         >
-                            <Input defaultValue="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_2) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.4 Safari/605.1.15" />
+                            <Input />
                         </Form.Item>
                         <Form.Item
                             name={["user", "access_token"]}
                             label="AccessToken"
                             rules={[{ required: true }]}
                         >
-                            <Input defaultValue="EAAGNO4a7r2wBADA3DZCUbPoGoBcj2qQXwP5ldqaBCwQ11VmoIRDcZCYWrGBWiTid8s7FZCZAZCXrp0g1dkMu8LwGMZAMaHYRe9uvzY86e0BtH7LJUKsGbSygib6kw3qmQh2oCHGODc7Enwi4o1JRBAnNVDXQMDLfKv96ElM3OWwXQ586wN5L6H" />
+                            <Input />
                         </Form.Item>
                         <Form.Item
                             name={["user", "proxy_id"]}
