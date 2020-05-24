@@ -13,7 +13,8 @@ let apiProxies = require("./routes/api/proxies");
 let apiFBHelpers = require("./routes/api/fb");
 let apiCampaigns = require("./routes/api/campaign");
 let apiPixels = require("./routes/api/pixel");
-let apiAdSets = require("./routes/api/adset")
+let apiAdSets = require("./routes/api/adset");
+let fileUpload = require('express-fileupload');
 
 //----------------------------------------------------------------------------------------
 // Express Settings
@@ -28,6 +29,9 @@ app.use(express.static(path.join(__dirname, "client/application/build")));
 app.use(cors({ origin: '*' }));
 
 app.use("/", indexRouter);
+
+
+app.use(fileUpload());
 // app.use("/users", usersRouter);
 
 

@@ -77,7 +77,6 @@ class c_ad {
     }
 
     async associate(data, api_version = this.api_version) {
-        console.log(data)
         let document = await request(`https://graph.facebook.com/${api_version}/act_${data.ad_account_id}/ads?access_token=${data.user.access_token}`, {
             method: 'POST',
             headers: {
@@ -94,7 +93,6 @@ class c_ad {
             }
         });
         let doc_data = JSON.parse(document.body)
-        console.log(doc_data)
         return doc_data
 
     }

@@ -4,8 +4,17 @@ let express = require("express"),
     cfg = require("./../../config"),
     router = express.Router();
 
-//----------------------------------------------------------------------------------------
-// users routes
+let formidable = require('formidable');
+
+
+router.post("/convert/image", async (req, res) => {
+
+    let file = {
+        name: req.files.file_image.name,
+        img: new Buffer(req.files.file_image.data).toString('base64'),
+    }
+    res.json(file)
+})
 
 
 
@@ -326,7 +335,7 @@ router.get("/targeting/category/life-events", async (req, res) => {
         },
         {
             "id": "6048026061783",
-            "name": "Родившиеся в мае",
+            "name": "Родившиесяжзщ в мае",
             "type": "life_events",
             "path": [
                 "День рождения",

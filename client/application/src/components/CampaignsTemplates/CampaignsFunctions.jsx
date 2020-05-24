@@ -444,23 +444,19 @@ class CampaignsFunctions extends React.Component {
                 key: "file_image",
                 render: (text, record) => {
                     if (record.file_image) {
-                        if (record.file_image.fileList) {
-                            if (record.file_image.fileList.length) {
-                                return (
-                                    <img
-                                        style={{
-                                            width: "75px",
-                                            height: "75px",
-                                        }}
-                                        src={
-                                            record.file_image.fileList[
-                                                record.file_image.fileList
-                                                    .length - 1
-                                            ].thumbUrl
-                                        }
-                                    ></img>
-                                );
-                            }
+                        if (record.file_image.file) {
+                            return (
+                                <img
+                                    style={{
+                                        width: "75px",
+                                        height: "75px",
+                                    }}
+                                    src={
+                                        "data:image/png;base64," +
+                                        record.file_image.file.response.img
+                                    }
+                                ></img>
+                            );
                         }
                     } else return <span>-</span>;
                 },
@@ -894,7 +890,7 @@ class CampaignsFunctions extends React.Component {
                     <Upload
                         name="file_image"
                         valuePropName="fileList"
-                        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                        action={`${url}/api/fb/convert/image`}
                         listType="picture"
                     >
                         <Button>
@@ -1010,6 +1006,12 @@ class CampaignsFunctions extends React.Component {
     }
     onFinish = async () => {
         let new_campaign = this.state.campaign_data;
+        for (let i = 0; i < new_campaign.adsets.length; i++) {
+            for (let y = 0; y < new_campaign.adsets[i].ads.length; y++) {
+                new_campaign.adsets[i].ads[y].file_image =
+                    new_campaign.adsets[i].ads[y].file_image.file.response;
+            }
+        }
         console.log(new_campaign);
         this.setModalLoading(true);
 

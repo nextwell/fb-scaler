@@ -70,8 +70,8 @@ router.post("/create", async (req, res) => {
                         for (let y = 0; y < adsets_data[i].ads.length; y++) {
                             ad = adsets_data[i].ads[y]
                             let uploaded_image = await fb.ad.uploadImage(user, proxy, body.ad_account_id, {
-                                name: ad.file_image.file.name,
-                                bytes: ad.file_image.file.thumbUrl
+                                name: ad.file_image.name,
+                                bytes: ad.file_image.img
                             })
                             // {
                             //     hash: '9da34eda8a9d1955b21e614507fe4a13',
@@ -86,7 +86,6 @@ router.post("/create", async (req, res) => {
                                     ad: ad,
                                     ad_account_id: body.ad_account_id
                                 })
-                                console.log(creative)
                                 if (creative.id) {
                                     let assoc = await fb.ad.associate({
                                         ad_account_id: body.ad_account_id,

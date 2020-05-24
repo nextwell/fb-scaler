@@ -66,7 +66,10 @@ class CampaignsList extends React.Component {
         let adset = null;
         let adsets = this.props.tcampaigns.data.adsets;
         for (let i = 0; i < adsets.length; i++) {
-            if (adsets[i].key == key && adsets[i].campaign_key == campaign_key) {
+            if (
+                adsets[i].key == key &&
+                adsets[i].campaign_key == campaign_key
+            ) {
                 adset = adsets[i];
                 break;
             }
@@ -217,24 +220,18 @@ class CampaignsList extends React.Component {
                 key: "file_image",
                 render: (text, record) => {
                     if (record.file_image) {
-                        if (record.file_image.fileList) {
-                            if (record.file_image.fileList.length) {
-                                return (
-                                    <img
-                                        style={{
-                                            width: "75px",
-                                            height: "75px",
-                                        }}
-                                        src={
-                                            record.file_image.fileList[
-                                                record.file_image.fileList
-                                                    .length - 1
-                                            ].thumbUrl
-                                        }
-                                    ></img>
-                                );
-                            }
-                        }
+                        return (
+                            <img
+                                style={{
+                                    width: "75px",
+                                    height: "75px",
+                                }}
+                                src={
+                                    "data:image/png;base64," +
+                                    record.file_image.img
+                                }
+                            ></img>
+                        );
                     } else return <span>-</span>;
                 },
             },
