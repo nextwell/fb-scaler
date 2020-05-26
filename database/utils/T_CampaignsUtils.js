@@ -20,3 +20,7 @@ module.exports.get_all = () => {
 module.exports.get_by_id = (_id) => {
 	return TCampaigns.findOne({ _id: ObjectID(_id) })
 }
+
+module.exports.remove_by_id = (_id) => {
+	return TCampaigns.remove({ _id: ObjectID(_id) })
+}

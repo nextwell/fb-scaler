@@ -1008,8 +1008,10 @@ class CampaignsFunctions extends React.Component {
         let new_campaign = this.state.campaign_data;
         for (let i = 0; i < new_campaign.adsets.length; i++) {
             for (let y = 0; y < new_campaign.adsets[i].ads.length; y++) {
-                new_campaign.adsets[i].ads[y].file_image =
-                    new_campaign.adsets[i].ads[y].file_image.file.response;
+                if (new_campaign.adsets[i].ads[y].file_image) {
+                    new_campaign.adsets[i].ads[y].file_image =
+                        new_campaign.adsets[i].ads[y].file_image.file.response;
+                }
             }
         }
         console.log(new_campaign);

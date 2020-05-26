@@ -13,7 +13,6 @@ router.post("/new", async (req, res) => {
     let proxy = await db.Proxies.get_by_id(body.proxy_id)
     let t_campaign_doc = await db.TCampaigns.get_by_id(body.template_campaign_id)
     if (t_campaign_doc) {
-        console.log(t_campaign_doc)
         let t_campaign = t_campaign_doc.data.campaigns_settings[0]
 
         let campaignData = {
@@ -40,9 +39,7 @@ router.post("/new", async (req, res) => {
 
 
 router.post("/template/new", async (req, res) => {
-    console.log(req.body)
     let obj = await db.TCampaigns.create({ data: req.body, name: req.body.campaigns_settings[0].name, date: new Date() })
-    console.log(obj)
     if (obj) {
         res.json({ success: true })
     }
@@ -74,6 +71,18 @@ router.get("/template/list", async (req, res) => {
 
     }
     res.json(campaigns)
+})
+
+router.get("/template/:id/remove", async (req, res) => {
+    await db.TCampaigns.remove_by_id(req.params.id)
+    res.json({ success: true })
+})
+
+router.get("/template/:id/copy", async (req, res) => {
+    let campaign = await db.TCampaigns.get_by_id(req.params.id)
+    campaign.data.campaigns_settings[0].name = `${campaign.name} (Copy)`
+    let new_campaign = await db.TCampaigns.create({ data: campaign.data, name: `${campaign.name} (Copy)`, date: new Date() })
+    res.json({ success: true })
 })
 
 module.exports = router;

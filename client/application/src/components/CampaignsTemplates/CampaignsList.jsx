@@ -5,11 +5,16 @@ import axios from "axios";
 import { connect } from "react-redux";
 import settings from "./../../containers/settings";
 
+import { store } from "./../../store/store.jsx";
+
+import { fetchTemplatesCampaigns } from "./../../actions/actionTemplateCampaign";
+
 import {
     PlusOutlined,
     DownOutlined,
     UploadOutlined,
     LoadingOutlined,
+    CloseCircleOutlined,
 } from "@ant-design/icons";
 
 import {
@@ -27,6 +32,7 @@ import {
     message,
     Spin,
     Empty,
+    Popconfirm,
 } from "antd";
 
 const loader = <LoadingOutlined style={{ fontSize: 24 }} spin />;
@@ -361,9 +367,59 @@ class CampaignsList extends React.Component {
             },
             { title: "Objective", dataIndex: "objective", key: "objective" },
             { title: "Status", dataIndex: "status", key: "status" },
+            {
+                title: <span className="blue-color text-s">Functions</span>,
+                dataIndex: "functions",
+                key: "functions",
+
+                render: (text, record) => [
+                    <Popconfirm
+                        title="Вы уверены?"
+                        cancelText="Нет"
+                        okText="Да"
+                        icon={<CloseCircleOutlined style={{ color: "red" }} />}
+                        onConfirm={() => this.remove_campaign(record)}
+                    >
+                        <Button danger type="link">
+                            Remove
+                        </Button>
+                    </Popconfirm>,
+                    <Button
+                        type="link"
+                        className="red-blue text-s"
+                        onClick={() => this.copy_campaign(record)}
+                        key="functions-copy"
+                    >
+                        Copy
+                    </Button>,
+                ],
+            },
             // { title: "Date", dataIndex: "createdAt", key: "createdAt" },
             // { title: 'Action', key: 'operation', render: () => <a>Publish</a> },
         ];
+    }
+
+    async remove_campaign(record) {
+        let doc = await axios.get(
+            `${url}/api/campaigns/template/${record._id}/remove`
+        );
+
+        if (doc.data.success) {
+            store.dispatch(
+                fetchTemplatesCampaigns(`${url}/api/campaigns/template/list`)
+            );
+        }
+    }
+
+    async copy_campaign(record) {
+        let doc = await axios.get(
+            `${url}/api/campaigns/template/${record._id}/copy`
+        );
+        if (doc.data.success) {
+            store.dispatch(
+                fetchTemplatesCampaigns(`${url}/api/campaigns/template/list`)
+            );
+        }
     }
 
     async load_countries() {
