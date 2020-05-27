@@ -797,7 +797,6 @@ class CampaignsFunctions extends React.Component {
         }
     };
     edit_ad = (record) => {
-        console.log(record);
         let campaign = this.state.campaign_data;
         for (let i = 0; i < campaign.adsets.length; i++) {
             if (campaign.adsets[i].key == record.adset_key) {
