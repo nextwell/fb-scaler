@@ -6,7 +6,6 @@ let express = require("express"),
 
 router.post("/create", async (req, res) => {
     let body = req.body
-    console.log(body)
 
     let user = await db.Users.get_by_id(body.user_id)
     let proxy = await db.Proxies.get_by_id(body.proxy_id)
@@ -69,9 +68,10 @@ router.post("/create", async (req, res) => {
                     if (adsets_data[i].ads) {
                         for (let y = 0; y < adsets_data[i].ads.length; y++) {
                             ad = adsets_data[i].ads[y]
+                            let image_doc = await db.Images.get_by_id(ad.file_image)
                             let uploaded_image = await fb.ad.uploadImage(user, proxy, body.ad_account_id, {
-                                name: ad.file_image.name,
-                                bytes: ad.file_image.img
+                                name: image_doc.name,
+                                bytes: image_doc.img
                             })
                             // {
                             //     hash: '9da34eda8a9d1955b21e614507fe4a13',
@@ -95,7 +95,6 @@ router.post("/create", async (req, res) => {
                                         adset_id: data.id,
                                         ad: ad
                                     })
-                                    console.log(assoc)
                                 }
                             }
                         }

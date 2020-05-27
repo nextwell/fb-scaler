@@ -29,7 +29,7 @@ router.post("/new", async (req, res) => {
                 res.json({ success: true, id: data.id })
             }
             else {
-                res.json({ success: false, err: "Ошибка при создании компании" })
+                res.json({ success: false, err: "Ошибка при создании кампании" })
             }
         }
     }
@@ -39,6 +39,12 @@ router.post("/new", async (req, res) => {
 
 
 router.post("/template/new", async (req, res) => {
+    for (let i = 0; i < req.body.adsets.length; i++) {
+        for (let y = 0; y < req.body.adsets[i].ads.length; y++) {
+            let image = await db.Images.create(req.body.adsets[i].ads[y].file_image)
+            req.body.adsets[i].ads[y].file_image = image._id
+        }
+    }
     let obj = await db.TCampaigns.create({ data: req.body, name: req.body.campaigns_settings[0].name, date: new Date() })
     if (obj) {
         res.json({ success: true })
@@ -69,6 +75,14 @@ router.get("/template/list", async (req, res) => {
             campaigns.adsets = [...campaigns.adsets, ...item.adsets]
         }
 
+    }
+    for (let i = 0; i < campaigns.adsets.length; i++) {
+        for (let y = 0; y < campaigns.adsets[i].ads.length; y++) {
+            let image = await db.Images.get_by_id(campaigns.adsets[i].ads[y].file_image)
+            if (image) {
+                campaigns.adsets[i].ads[y].file_image = image.toObject()
+            }
+        }
     }
     res.json(campaigns)
 })
@@ -145,8 +159,13 @@ router.post("/template/:id/edit/ad", async (req, res) => {
                         campaign_data.adsets[i].ads[y].welcome_text = body.welcome_text
                         campaign_data.adsets[i].ads[y].answer = body.answer
                         campaign_data.adsets[i].ads[y].action = body.action
-                        campaign_data.adsets[i].ads[y].file_image = body.file_image
 
+                        let img_doc = await db.Images.get_by_id(campaign_data.adsets[i].ads[y].file_image)
+
+                        if (img_doc.img != body.file_image.img) {
+                            let img = await db.Images.create(body.file_image)
+                            campaign_data.adsets[i].ads[y].file_image = img._id
+                        }
 
                         await db.TCampaigns.update({ _id: req.params.id, action: { data: campaign_data } })
 

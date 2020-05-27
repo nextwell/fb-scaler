@@ -123,7 +123,7 @@ class createCampaign extends React.Component {
             );
             let data = create_campaign_document.data;
             if (data.success) {
-                message.success(`Компания (ID: ${data.id}) успешна создана`);
+                message.success(`Кампания (ID: ${data.id}) успешна создана`);
                 console.log({
                     user_id: this.state.user._id,
                     proxy_id: this.state.user.proxy_id,
@@ -196,7 +196,7 @@ class createCampaign extends React.Component {
                     <Result
                         style={{ marginTop: "5%" }}
                         icon={<SmileOutlined />}
-                        title="Давайте попробуем создать компанию!"
+                        title="Давайте попробуем создать кампанию!"
                         extra={
                             <Button
                                 type="primary"
@@ -210,7 +210,7 @@ class createCampaign extends React.Component {
                     />
 
                     <Modal
-                        title="Создание компании"
+                        title="Создание кампании"
                         visible={this.state.visibleModal}
                         onCancel={this.handleCancel}
                         okButtonProps={{
@@ -329,7 +329,7 @@ class createCampaign extends React.Component {
         if (this.state.isAdAccountSelected) {
             return [
                 <Alert
-                    message="Данные компании"
+                    message="Данные кампании"
                     type="info"
                     showIcon
                     style={{ marginBottom: "20px" }}

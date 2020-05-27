@@ -913,7 +913,7 @@ class CampaignsFunctions extends React.Component {
         };
         return [
             <Alert
-                message="Данные компании"
+                message="Данные кампании"
                 type="info"
                 showIcon
                 style={{ marginBottom: "20px" }}

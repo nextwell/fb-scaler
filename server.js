@@ -21,8 +21,8 @@ let fileUpload = require('express-fileupload');
 
 let app = express();
 
-app.use(bodyParser.json({ limit: '50mb', extended: true }));
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+app.use(bodyParser.json({ limit: '500mb', extended: true }));
+app.use(bodyParser.urlencoded({ limit: '500mb', extended: true }));
 
 app.use(express.static(path.join(__dirname, "client/application/build")));
 

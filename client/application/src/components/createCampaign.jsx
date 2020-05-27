@@ -97,9 +97,7 @@ class createCampaign extends React.Component {
     async onFinish(formData) {
         console.log(formData);
         let campaign = formData;
-        message.info(
-            `Процесс создания кампании начат. Не закрывайте эту страницу`
-        );
+        message.info(`Процесс создания кампании запущен`);
 
         this.setModalLoading(true);
         let res = await axios.get(
@@ -114,23 +112,16 @@ class createCampaign extends React.Component {
             );
             let data = create_campaign_document.data;
             if (data.success) {
-                message.success(`Компания (ID: ${data.id}) успешна создана`);
+                message.success(`Кампания (ID: ${data.id}) успешна создана`);
                 campaign.campaign_id = data.id;
-                let createAdSets_document = await axios.post(
-                    `${url}/api/adsets/create`,
-                    campaign
+                axios.post(`${url}/api/adsets/create`, campaign);
+                message.success(
+                    `Загрузка адсетов и объявлений запущена, можно закрыть страницу`
                 );
 
-                if (createAdSets_document.data.success) {
-                    message.success(
-                        `Успешно создано ${createAdSets_document.data.success_adsets} адсетов`
-                    );
-                    this.setModalLoading(false);
-                    this.setModalVisible(false);
-                    this.resetForm();
-                } else {
-                    message.error("Произошла ошибка при создании адсетов");
-                }
+                this.setModalLoading(false);
+                this.setModalVisible(false);
+                this.resetForm();
             }
         } else if (res.data.err) {
             message.error(res.data.err);
@@ -165,7 +156,7 @@ class createCampaign extends React.Component {
                     <Result
                         style={{ marginTop: "5%" }}
                         icon={<SmileOutlined />}
-                        title="Давайте попробуем создать компанию!"
+                        title="Давайте попробуем создать кампанию!"
                         extra={
                             <Button
                                 type="primary"
@@ -179,7 +170,7 @@ class createCampaign extends React.Component {
                     />
 
                     <Modal
-                        title="Создание компании"
+                        title="Создание кампании"
                         visible={this.state.visibleModal}
                         onCancel={this.handleCancel}
                         okButtonProps={{

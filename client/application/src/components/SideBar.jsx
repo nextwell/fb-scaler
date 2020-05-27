@@ -53,7 +53,7 @@ export default class SideBar extends React.Component {
                 <Menu.Item key="5">
                     <Link to="/newcampaign">
                         <SolutionOutlined />
-                        Создание компании
+                        Создание кампании
                     </Link>
                 </Menu.Item>
 

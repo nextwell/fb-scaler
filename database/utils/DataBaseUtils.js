@@ -5,6 +5,7 @@ let mongoose = require("mongoose"),
 	Ad_Accounts = require("./Ad_AccountsUtils"),
 	Pages = require("./PagesUtils"),
 	TCampaigns = require("./T_CampaignsUtils"),
+	Images = require("./ImagesUtils"),
 	config = require("./../../config")
 
 mongoose.Promise = global.Promise
@@ -30,5 +31,5 @@ module.exports.Proxies = Proxies
 module.exports.BManagers = BManagers
 module.exports.AdAccounts = Ad_Accounts
 module.exports.Pages = Pages
-
 module.exports.TCampaigns = TCampaigns
+module.exports.Images = Images

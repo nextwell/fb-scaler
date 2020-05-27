@@ -25,6 +25,7 @@ module.exports.remove_by_id = (_id) => {
 	return TCampaigns.remove({ _id: ObjectID(_id) })
 }
 
+
 module.exports.update = (object) => {
 	return TCampaigns.update({ _id: ObjectID(object._id) }, { $set: object.action });
 }
