@@ -18,6 +18,8 @@ router.post("/create", async (req, res) => {
 
         let adsets = []
 
+
+
         for (let i = 0; i < adsets_data.length; i++) {
             let adset = adsets_data[i]
             let obj = {
@@ -54,7 +56,7 @@ router.post("/create", async (req, res) => {
                 genders.push(adset.genders)
             }
             if (genders.length) obj.targeting["genders"] = genders
-            adsets.push(obj)
+            adsets.push({ adset_doc: adset, adset_fb: obj })
         }
 
         // console.log(adsets)
@@ -63,44 +65,46 @@ router.post("/create", async (req, res) => {
         if (user && proxy && adsets.length) {
             let success_adsets = 0
             for (let i = 0; i < adsets.length; i++) {
-                let data = await fb.ad_set.create(user, proxy, { ad_account_id: body.ad_account_id }, adsets[i])
-                if (data.id) {
-                    if (adsets_data[i].ads) {
-                        for (let y = 0; y < adsets_data[i].ads.length; y++) {
-                            ad = adsets_data[i].ads[y]
-                            let image_doc = await db.Images.get_by_id(ad.file_image)
-                            let uploaded_image = await fb.ad.uploadImage(user, proxy, body.ad_account_id, {
-                                name: image_doc.name,
-                                bytes: image_doc.img
-                            })
-                            // {
-                            //     hash: '9da34eda8a9d1955b21e614507fe4a13',
-                            //     url: 'https://scontent.fevn2-1.fna.fbcdn.net/v/t45.1600-4/100382918_23844907932970558_2098036192032325632_n.png?_nc_cat=105&_nc_sid=2aac32&_nc_ohc=EPrBpAsOpH8AX8lQUce&_nc_ht=scontent.fevn2-1.fna&oh=3f5fc7c377fa3b560a30cf0e770998b8&oe=5EEC8807'
-                            // }
-                            if (uploaded_image) {
-                                let creative = await fb.ad.create({
-                                    user: user,
-                                    proxy: proxy,
-                                    page_id: body.page,
-                                    image: uploaded_image,
-                                    ad: ad,
-                                    ad_account_id: body.ad_account_id
+                let data = await fb.ad_set.create(user, proxy, { ad_account_id: body.ad_account_id }, adsets[i].adset_fb)
+                if (data) {
+                    if (data.id) {
+                        if (adsets_data[i].ads) {
+                            for (let y = 0; y < adsets_data[i].ads.length; y++) {
+                                ad = adsets_data[i].ads[y]
+                                let image_doc = await db.Images.get_by_id(ad.file_image)
+                                let uploaded_image = await fb.ad.uploadImage(user, proxy, body.ad_account_id, {
+                                    name: image_doc.name,
+                                    bytes: image_doc.img
                                 })
-                                if (creative.id) {
-                                    let assoc = await fb.ad.associate({
-                                        ad_account_id: body.ad_account_id,
+                                // {
+                                //     hash: '9da34eda8a9d1955b21e614507fe4a13',
+                                //     url: 'https://scontent.fevn2-1.fna.fbcdn.net/v/t45.1600-4/100382918_23844907932970558_2098036192032325632_n.png?_nc_cat=105&_nc_sid=2aac32&_nc_ohc=EPrBpAsOpH8AX8lQUce&_nc_ht=scontent.fevn2-1.fna&oh=3f5fc7c377fa3b560a30cf0e770998b8&oe=5EEC8807'
+                                // }
+                                if (uploaded_image) {
+                                    let creative = await fb.ad.create({
                                         user: user,
                                         proxy: proxy,
-                                        creative_id: creative.id,
-                                        adset_id: data.id,
-                                        ad: ad
+                                        page_id: body.page,
+                                        image: uploaded_image,
+                                        ad: ad,
+                                        ad_account_id: body.ad_account_id
                                     })
+                                    if (creative.id) {
+                                        let assoc = await fb.ad.associate({
+                                            ad_account_id: body.ad_account_id,
+                                            user: user,
+                                            proxy: proxy,
+                                            creative_id: creative.id,
+                                            adset_id: data.id,
+                                            ad: ad
+                                        })
+                                    }
                                 }
                             }
                         }
-
+                        success_adsets++
                     }
-                    success_adsets++
+
                 }
 
             }
