@@ -32,7 +32,7 @@ class c_adset {
         }
         catch (err) {
             console.log("[ERROR] Request to creating adset")
-            console.log(JSON.parse(err.body))
+            console.log(err)
             return false
         }
     }

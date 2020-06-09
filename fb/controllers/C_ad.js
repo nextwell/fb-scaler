@@ -49,16 +49,16 @@ class c_ad {
                 }
             }
             let document = await utils.request(options)
-            let data = document.body
-            if (data.error) {
-                console.log(data.error)
+            let data_doc = document.body
+            if (data_doc.error) {
+                console.log(data_doc.error)
                 return false
             }
-            console.log(data)
-            return data
+            console.log(data_doc)
+            return data_doc
         } catch (err) {
             console.log("[ERROR] Request to creating ad")
-            console.log(JSON.parse(err.body))
+            console.log(err)
             return false
         }
     }
@@ -70,22 +70,47 @@ class c_ad {
         img.bytes = img.bytes.replace("data:image/jpg;base64,", "")
         img.bytes = img.bytes.toString('base64')
 
-
-
-        let document = await request(`https://graph.facebook.com/${api_version}/act_${campaign_id}/adimages?access_token=${user.access_token}`, {
-            method: 'POST',
-            headers: {
-                'User-Agent': user.agent
-            },
-            proxy: `http://${proxy.ip}:${proxy.port}`,
-            data: img
-        });
-        let data = JSON.parse(document.body)
-        if (data.images) {
-            if (data.images[img.name]) return data.images[img.name]
+        try {
+            let options = {
+                url: `https://graph.facebook.com/${api_version}/act_${campaign_id}/adimages?access_token=${user.access_token}`,
+                method: 'POST',
+                headers: {
+                    'User-Agent': user.agent
+                },
+                proxy: `http://${proxy.ip}:${proxy.port}`,
+                json: img
+            }
+            let document = await utils.request(options)
+            let data_doc = document.body
+            console.log(data_doc)
+            if (data_doc.images) {
+                if (data_doc.images[img.name]) return data_doc.images[img.name]
+                else return false
+            }
             else return false
         }
-        else return false
+        catch (err) {
+            console.log("[ERROR] Request to upload image creative")
+            console.log(err)
+            return false
+        }
+
+
+
+        // let document = await request(`https://graph.facebook.com/${api_version}/act_${campaign_id}/adimages?access_token=${user.access_token}`, {
+        //     method: 'POST',
+        //     headers: {
+        //         'User-Agent': user.agent
+        //     },
+        //     proxy: `http://${proxy.ip}:${proxy.port}`,
+        //     data: img
+        // });
+        // let data = JSON.parse(document.body)
+        // if (data.images) {
+        //     if (data.images[img.name]) return data.images[img.name]
+        //     else return false
+        // }
+        // else return false
     }
 
     async associate(data, api_version = this.api_version) {
@@ -107,17 +132,17 @@ class c_ad {
                 }
             }
             let document = await utils.request(options)
-            let doc_data = document.body
-            if (doc_data.error) {
-                console.log(doc_data.error)
+            let data_doc = document.body
+            if (data_doc.error) {
+                console.log(data_doc.error)
                 return false
             }
-            console.log(doc_data)
-            return doc_data
+            console.log(data_doc)
+            return data_doc
         }
         catch (err) {
             console.log("[ERROR] Request to assosiate ad adset and creative")
-            console.log(JSON.parse(err.body))
+            console.log(err)
             return false
         }
     }
