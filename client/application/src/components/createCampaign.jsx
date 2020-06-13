@@ -114,7 +114,7 @@ class createCampaign extends React.Component {
             if (data.success) {
                 message.success(`Кампания (ID: ${data.id}) успешна создана`);
                 campaign.campaign_id = data.id;
-                axios.post(`${url}/api/adsets/create`, campaign);
+                axios.post(`${url}/api/adsets/create/v2`, campaign);
                 message.success(
                     `Загрузка адсетов и объявлений запущена, можно закрыть страницу`
                 );

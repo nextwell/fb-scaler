@@ -11,9 +11,10 @@ class c_adset {
         adset.attribution_spec = [adset.attribution_spec["CONVERSIONS"]]
         console.log(user, proxy, campaign, adset)
         try {
-
+            let url = `https://graph.facebook.com/${api_version}/act_${campaign.ad_account_id}/adsets?access_token=${user.access_token}`;
+            if (process.env.MODE == "DEVELOP") url = "http://localhost:8080/fakeapi/fb/id";
             let options = {
-                url: `https://graph.facebook.com/${api_version}/act_${campaign.ad_account_id}/adsets?access_token=${user.access_token}`,
+                url: url,
                 method: 'POST',
                 headers: {
                     'User-Agent': user.agent
@@ -42,36 +43,3 @@ class c_adset {
 let obj = new c_adset()
 
 module.exports = obj
-
-  // let options = {
-            //     url: `https://graph.facebook.com/${api_version}/act_${campaign.ad_account_id}/adsets?access_token=${user.access_token}`,
-            //     method: 'POST', // default
-            //     data: adset,
-            //     proxy: {
-            //         host: proxy.ip,
-            //         port: proxy.port,
-            //     },
-            //     headers: { 'User-Agent': user.agent }
-            // }
-            // let document = await axios(options)
-
-
- // var options = {
-//     uri: `https://graph.facebook.com/${api_version}/act_${campaign.ad_account_id}/adsets?access_token=${user.access_token}`,
-//     method: 'POST',
-//     headers: {
-//         'User-Agent': user.agent
-//     },
-//     proxy: `http://${proxy.ip}:${proxy.port}`,
-//     body: JSON.stringify(adset)
-// };
-// let document = await requestPromise(options)
-
- // let document = await request(`https://graph.facebook.com/${api_version}/act_${campaign.ad_account_id}/adsets?access_token=${user.access_token}`, {
-//     method: 'POST',
-//     headers: {
-//         'User-Agent': user.agent
-//     },
-//     proxy: `http://${proxy.ip}:${proxy.port}`,
-//     data: adset
-// });

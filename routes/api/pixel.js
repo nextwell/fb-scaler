@@ -18,11 +18,13 @@ router.get("/list/:user_id/:ad_account_id", async (req, res) => {
     if (user && proxy) {
         let document = await fb.pixel.get(user, proxy, req.params.ad_account_id)
         console.log(document)
+        if (process.env.MODE == "DEVELOP") document.data = [{ id: 123, name: "test" }]
         if (document.data) {
             res.json({ success: true, data: document.data })
         }
         else {
-            res.json({ success: false, err: "Ошибка при чтении пикселей" })
+            res.json({ success: true, data: [] })
+            // res.json({ success: false, err: "Ошибка при чтении пикселей" })
         }
     }
 

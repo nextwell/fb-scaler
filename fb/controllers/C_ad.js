@@ -9,8 +9,10 @@ class c_ad {
     }
     async create(data, api_version = this.api_version) {
         try {
+            let url = `https://graph.facebook.com/${api_version}/act_${data.ad_account_id}/adcreatives?access_token=${data.user.access_token}`;
+            if (process.env.MODE == "DEVELOP") url = "http://localhost:8080/fakeapi/fb/id";
             let options = {
-                url: `https://graph.facebook.com/${api_version}/act_${data.ad_account_id}/adcreatives?access_token=${data.user.access_token}`,
+                url: url,
                 method: 'POST',
                 headers: {
                     'User-Agent': data.user.agent
@@ -71,8 +73,10 @@ class c_ad {
         img.bytes = img.bytes.toString('base64')
 
         try {
+            let url = `https://graph.facebook.com/${api_version}/act_${campaign_id}/adimages?access_token=${user.access_token}`;
+            if (process.env.MODE == "DEVELOP") url = "http://localhost:8080/fakeapi/fb/image";
             let options = {
-                url: `https://graph.facebook.com/${api_version}/act_${campaign_id}/adimages?access_token=${user.access_token}`,
+                url: url,
                 method: 'POST',
                 headers: {
                     'User-Agent': user.agent
@@ -115,8 +119,10 @@ class c_ad {
 
     async associate(data, api_version = this.api_version) {
         try {
+            let url = `https://graph.facebook.com/${api_version}/act_${data.ad_account_id}/ads?access_token=${data.user.access_token}`;
+            if (process.env.MODE == "DEVELOP") url = "http://localhost:8080/fakeapi/fb/id";
             let options = {
-                url: `https://graph.facebook.com/${api_version}/act_${data.ad_account_id}/ads?access_token=${data.user.access_token}`,
+                url: url,
                 method: 'POST',
                 headers: {
                     'User-Agent': data.user.agent

@@ -65,6 +65,8 @@ app.use(function (req, res, next) {
 
 });
 
+if (process.env.MODE == "DEVELOP") console.log("APP STARTED IN DEVELOP MODE")
+
 
 
 
